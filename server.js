@@ -141,11 +141,12 @@ app.post("/api/chat", async (req, res) => {
         },
 
         body: JSON.stringify({
-          model: MODEL,
-          messages: safeMessages,
-          stream: true,
-          temperature: 0.7,
-        }),
+  model: MODEL,
+  messages: safeMessages,
+  stream: true,
+  temperature: 0.7,
+  max_tokens: 1000,
+}),
 
         signal: controller.signal,
       }
