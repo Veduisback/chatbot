@@ -96,7 +96,9 @@ chatForm.addEventListener("submit", async (event) => {
   let assistantText = "";
 
   try {
-    const response = await fetch("/api/chat", {
+    const API_URL = "https://chatbot-eqq8.onrender.com";
+
+const response = await fetch(`${API_URL}/api/chat`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
