@@ -29,3 +29,4 @@ The OpenRouter API key is never exposed to the browser.
 
 ```bash
 npm install
+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
