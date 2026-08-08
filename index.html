@@ -2,278 +2,50 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
+
   <meta
     name="viewport"
     content="width=device-width, initial-scale=1.0"
   />
-  <meta name="description" content="A simple streaming AI chatbot." />
+
   <title>AI Chat</title>
 
-  <style>
-    * {
-      box-sizing: border-box;
-    }
-
-    :root {
-      color-scheme: dark;
-      --bg: #0b0b0f;
-      --panel: #13131a;
-      --panel-light: #1b1b24;
-      --border: #292936;
-      --text: #f5f5f7;
-      --muted: #9696a5;
-      --accent: #8b5cf6;
-      --accent-hover: #7c3aed;
-      --user: #27212f;
-      --assistant: #17171e;
-    }
-
-    body {
-      margin: 0;
-      min-height: 100vh;
-      background: var(--bg);
-      color: var(--text);
-      font-family:
-        Inter,
-        ui-sans-serif,
-        system-ui,
-        -apple-system,
-        BlinkMacSystemFont,
-        "Segoe UI",
-        sans-serif;
-    }
-
-    button,
-    textarea {
-      font: inherit;
-    }
-
-    .app {
-      width: min(900px, 100%);
-      min-height: 100vh;
-      margin: 0 auto;
-      display: flex;
-      flex-direction: column;
-    }
-
-    header {
-      height: 64px;
-      padding: 0 20px;
-      border-bottom: 1px solid var(--border);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      background: rgba(11, 11, 15, 0.92);
-    }
-
-    .brand {
-      font-weight: 700;
-      letter-spacing: -0.02em;
-    }
-
-    .status {
-      color: var(--muted);
-      font-size: 13px;
-    }
-
-    #messages {
-      flex: 1;
-      padding: 28px 20px 150px;
-      overflow-y: auto;
-    }
-
-    .welcome {
-      min-height: 60vh;
-      display: grid;
-      place-items: center;
-      text-align: center;
-    }
-
-    .welcome-inner {
-      max-width: 520px;
-    }
-
-    .welcome h1 {
-      margin: 0 0 10px;
-      font-size: clamp(30px, 6vw, 48px);
-      letter-spacing: -0.04em;
-    }
-
-    .welcome p {
-      margin: 0;
-      color: var(--muted);
-      line-height: 1.6;
-    }
-
-    .message {
-      display: flex;
-      margin-bottom: 20px;
-    }
-
-    .message.user {
-      justify-content: flex-end;
-    }
-
-    .bubble {
-      max-width: min(720px, 88%);
-      padding: 13px 16px;
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      line-height: 1.6;
-      white-space: pre-wrap;
-      overflow-wrap: anywhere;
-    }
-
-    .user .bubble {
-      background: var(--user);
-      border-bottom-right-radius: 5px;
-    }
-
-    .assistant .bubble {
-      background: var(--assistant);
-      border-bottom-left-radius: 5px;
-    }
-
-    .bubble.streaming::after {
-      content: "▋";
-      margin-left: 3px;
-      animation: blink 0.8s infinite;
-    }
-
-    @keyframes blink {
-      50% {
-        opacity: 0;
-      }
-    }
-
-    .composer-wrap {
-      position: fixed;
-      bottom: 0;
-      left: 50%;
-      width: min(900px, 100%);
-      transform: translateX(-50%);
-      padding: 16px 20px 20px;
-      background: linear-gradient(
-        transparent,
-        var(--bg) 25%
-      );
-    }
-
-    .composer {
-      display: flex;
-      align-items: flex-end;
-      gap: 10px;
-      padding: 10px;
-      background: var(--panel);
-      border: 1px solid var(--border);
-      border-radius: 18px;
-      box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.2);
-    }
-
-    textarea {
-      flex: 1;
-      min-height: 44px;
-      max-height: 180px;
-      resize: none;
-      border: 0;
-      outline: 0;
-      padding: 11px 8px;
-      background: transparent;
-      color: var(--text);
-      line-height: 1.4;
-    }
-
-    textarea::placeholder {
-      color: var(--muted);
-    }
-
-    button {
-      border: 0;
-      cursor: pointer;
-      color: white;
-      background: var(--accent);
-      border-radius: 12px;
-      padding: 11px 16px;
-      font-weight: 600;
-      transition: background 0.15s ease, transform 0.15s ease;
-    }
-
-    button:hover:not(:disabled) {
-      background: var(--accent-hover);
-    }
-
-    button:active:not(:disabled) {
-      transform: scale(0.97);
-    }
-
-    button:disabled {
-      cursor: not-allowed;
-      opacity: 0.45;
-    }
-
-    #stopButton {
-      display: none;
-      background: #dc2626;
-    }
-
-    #stopButton:hover {
-      background: #b91c1c;
-    }
-
-    .error {
-      color: #fca5a5;
-      border-color: #7f1d1d;
-    }
-
-    @media (max-width: 600px) {
-      header {
-        padding: 0 14px;
-      }
-
-      #messages {
-        padding: 20px 14px 140px;
-      }
-
-      .composer-wrap {
-        padding: 12px 12px 14px;
-      }
-
-      .bubble {
-        max-width: 92%;
-      }
-
-      .composer {
-        border-radius: 15px;
-      }
-
-      button {
-        padding: 10px 13px;
-      }
-    }
-  </style>
+  <link rel="stylesheet" href="style.css" />
 </head>
 
 <body>
+
   <div class="app">
-    <header>
-      <div class="brand">AI Chat</div>
-      <div id="status" class="status">Ready</div>
+
+    <header class="header">
+      <div class="brand">
+        AI Chat
+      </div>
+
+      <div id="status" class="status">
+        Ready
+      </div>
     </header>
 
     <main id="messages">
+
       <section id="welcome" class="welcome">
         <div class="welcome-inner">
           <h1>Ask anything.</h1>
+
           <p>
             A simple AI chatbot with streaming responses,
             multi-turn conversations, and stoppable generation.
           </p>
         </div>
       </section>
+
     </main>
 
     <div class="composer-wrap">
+
       <form id="chatForm" class="composer">
+
         <textarea
           id="messageInput"
           rows="1"
@@ -282,17 +54,28 @@
           autocomplete="off"
         ></textarea>
 
-        <button id="sendButton" type="submit">
+        <button
+          id="sendButton"
+          type="submit"
+        >
           Send
         </button>
 
-        <button id="stopButton" type="button">
+        <button
+          id="stopButton"
+          type="button"
+          style="display: none;"
+        >
           Stop
         </button>
+
       </form>
+
     </div>
+
   </div>
 
-  <script src="/app.js"></script>
+  <script src="app.js"></script>
+
 </body>
 </html>
