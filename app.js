@@ -1,3 +1,5 @@
+const API_URL = "https://chatbot-eqq8.onrender.com";
+
 const chatForm = document.getElementById("chatForm");
 const messageInput = document.getElementById("messageInput");
 const sendButton = document.getElementById("sendButton");
@@ -10,19 +12,29 @@ let conversation = [];
 let controller = null;
 let isGenerating = false;
 
+
+/* -----------------------------
+   Add message to UI
+----------------------------- */
+
 function addMessage(role, content = "") {
+
   if (welcome) {
     welcome.remove();
   }
 
   const wrapper = document.createElement("div");
+
   wrapper.className = `message ${role}`;
 
   const bubble = document.createElement("div");
+
   bubble.className = "bubble";
+
   bubble.textContent = content;
 
   wrapper.appendChild(bubble);
+
   messagesContainer.appendChild(wrapper);
 
   scrollToBottom();
@@ -30,191 +42,432 @@ function addMessage(role, content = "") {
   return bubble;
 }
 
+
+/* -----------------------------
+   Scroll chat to bottom
+----------------------------- */
+
 function scrollToBottom() {
-  messagesContainer.scrollTop = messagesContainer.scrollHeight;
+
+  messagesContainer.scrollTop =
+    messagesContainer.scrollHeight;
 }
+
+
+/* -----------------------------
+   Generation state
+----------------------------- */
 
 function setGenerating(value) {
+
   isGenerating = value;
 
-  sendButton.style.display = value ? "none" : "block";
-  stopButton.style.display = value ? "block" : "none";
+  sendButton.style.display =
+    value ? "none" : "block";
+
+  stopButton.style.display =
+    value ? "block" : "none";
+
   messageInput.disabled = value;
 
-  statusElement.textContent = value
-    ? "Generating..."
-    : "Ready";
+  statusElement.textContent =
+    value ? "Generating..." : "Ready";
 }
+
+
+/* -----------------------------
+   Textarea auto resize
+----------------------------- */
 
 function setInputHeight() {
+
   messageInput.style.height = "auto";
+
   messageInput.style.height =
-    Math.min(messageInput.scrollHeight, 180) + "px";
+    Math.min(
+      messageInput.scrollHeight,
+      180
+    ) + "px";
 }
 
-messageInput.addEventListener("input", setInputHeight);
 
-messageInput.addEventListener("keydown", (event) => {
-  if (event.key === "Enter" && !event.shiftKey) {
+/* -----------------------------
+   Input events
+----------------------------- */
+
+messageInput.addEventListener(
+  "input",
+  setInputHeight
+);
+
+
+messageInput.addEventListener(
+  "keydown",
+  (event) => {
+
+    if (
+      event.key === "Enter" &&
+      !event.shiftKey
+    ) {
+
+      event.preventDefault();
+
+      if (!isGenerating) {
+        chatForm.requestSubmit();
+      }
+    }
+  }
+);
+
+
+/* -----------------------------
+   Submit message
+----------------------------- */
+
+chatForm.addEventListener(
+  "submit",
+  async (event) => {
+
+    // VERY IMPORTANT:
+    // Prevent browser page refresh.
     event.preventDefault();
 
-    if (!isGenerating) {
-      chatForm.requestSubmit();
+    if (isGenerating) {
+      return;
     }
-  }
-});
 
-chatForm.addEventListener("submit", async (event) => {
-  event.preventDefault();
+    const text =
+      messageInput.value.trim();
 
-  if (isGenerating) {
-    return;
-  }
+    if (!text) {
+      return;
+    }
 
-  const text = messageInput.value.trim();
 
-  if (!text) {
-    return;
-  }
+    /* -----------------------------
+       Add user message
+    ----------------------------- */
 
-  messageInput.value = "";
-  setInputHeight();
+    messageInput.value = "";
 
-  conversation.push({
-    role: "user",
-    content: text,
-  });
+    setInputHeight();
 
-  addMessage("user", text);
-
-  const assistantBubble = addMessage("assistant");
-  assistantBubble.classList.add("streaming");
-
-  controller = new AbortController();
-  setGenerating(true);
-
-  let assistantText = "";
-
-  try {
-    const API_URL = "https://chatbot-eqq8.onrender.com";
-
-const response = await fetch(`${API_URL}/api/chat`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        messages: conversation,
-      }),
-      signal: controller.signal,
+    conversation.push({
+      role: "user",
+      content: text,
     });
 
-    if (!response.ok) {
-      let errorMessage = "Something went wrong.";
+    addMessage(
+      "user",
+      text
+    );
 
-      try {
-        const errorData = await response.json();
-        errorMessage = errorData.error || errorMessage;
-      } catch {
-        // Ignore JSON parsing failure.
+
+    /* -----------------------------
+       Create assistant message
+    ----------------------------- */
+
+    const assistantBubble =
+      addMessage(
+        "assistant",
+        ""
+      );
+
+    assistantBubble.classList.add(
+      "streaming"
+    );
+
+
+    /* -----------------------------
+       Create abort controller
+    ----------------------------- */
+
+    controller =
+      new AbortController();
+
+    setGenerating(true);
+
+    let assistantText = "";
+
+
+    try {
+
+      /* -----------------------------
+         Send request to Render
+      ----------------------------- */
+
+      const response =
+        await fetch(
+          `${API_URL}/api/chat`,
+          {
+            method: "POST",
+
+            headers: {
+              "Content-Type":
+                "application/json",
+            },
+
+            body: JSON.stringify({
+              messages: conversation,
+            }),
+
+            signal:
+              controller.signal,
+          }
+        );
+
+
+      /* -----------------------------
+         Handle HTTP errors
+      ----------------------------- */
+
+      if (!response.ok) {
+
+        let errorMessage =
+          "Something went wrong.";
+
+        try {
+
+          const errorData =
+            await response.json();
+
+          errorMessage =
+            errorData.error ||
+            errorMessage;
+
+        } catch {
+          // Ignore JSON parsing errors.
+        }
+
+        throw new Error(
+          errorMessage
+        );
       }
 
-      throw new Error(errorMessage);
-    }
 
-    if (!response.body) {
-      throw new Error("Streaming is not supported by this browser.");
-    }
+      /* -----------------------------
+         Check streaming support
+      ----------------------------- */
 
-    const reader = response.body.getReader();
-    const decoder = new TextDecoder();
+      if (!response.body) {
 
-    let buffer = "";
-
-    while (true) {
-      const { value, done } = await reader.read();
-
-      if (done) {
-        break;
+        throw new Error(
+          "Streaming is not supported by this browser."
+        );
       }
 
-      buffer += decoder.decode(value, {
-        stream: true,
-      });
 
-      const events = buffer.split("\n\n");
-      buffer = events.pop() || "";
+      /* -----------------------------
+         Read stream
+      ----------------------------- */
 
-      for (const event of events) {
-        const lines = event.split("\n");
+      const reader =
+        response.body.getReader();
 
-        for (const line of lines) {
-          if (!line.startsWith("data:")) {
-            continue;
-          }
+      const decoder =
+        new TextDecoder();
 
-          const data = line.slice(5).trim();
+      let buffer = "";
 
-          if (!data || data === "[DONE]") {
-            continue;
-          }
 
-          try {
-            const parsed = JSON.parse(data);
+      while (true) {
 
-            if (parsed.type === "error") {
-              throw new Error(parsed.error);
+        const {
+          value,
+          done,
+        } = await reader.read();
+
+
+        if (done) {
+          break;
+        }
+
+
+        buffer +=
+          decoder.decode(
+            value,
+            {
+              stream: true,
             }
+          );
 
-            if (parsed.content) {
-              assistantText += parsed.content;
-              assistantBubble.textContent = assistantText;
-              scrollToBottom();
-            }
-          } catch (error) {
+
+        /*
+         * Server sends SSE events
+         * separated by blank lines.
+         */
+
+        const events =
+          buffer.split("\n\n");
+
+        buffer =
+          events.pop() || "";
+
+
+        for (const event of events) {
+
+          const lines =
+            event.split("\n");
+
+
+          for (const line of lines) {
+
             if (
-              error instanceof Error &&
-              error.message !== "Unexpected token"
+              !line.startsWith("data:")
             ) {
-              throw error;
+              continue;
+            }
+
+
+            const data =
+              line
+                .slice(5)
+                .trim();
+
+
+            if (
+              !data ||
+              data === "[DONE]"
+            ) {
+              continue;
+            }
+
+
+            try {
+
+              const parsed =
+                JSON.parse(data);
+
+
+              if (
+                parsed.type === "error"
+              ) {
+
+                throw new Error(
+                  parsed.error
+                );
+              }
+
+
+              if (parsed.content) {
+
+                assistantText +=
+                  parsed.content;
+
+                assistantBubble.textContent =
+                  assistantText;
+
+                scrollToBottom();
+              }
+
+            } catch (error) {
+
+              /*
+               * Ignore malformed JSON
+               * chunks.
+               */
+
+              if (
+                error instanceof Error &&
+                error.message !==
+                  "Unexpected token"
+              ) {
+
+                throw error;
+              }
             }
           }
         }
       }
-    }
 
-    // Store the completed or partially streamed assistant response.
-    conversation.push({
-      role: "assistant",
-      content: assistantText,
-    });
-  } catch (error) {
-    if (error.name === "AbortError") {
-      // Keep whatever content was streamed before stopping.
+
+      /* -----------------------------
+         Save assistant response
+      ----------------------------- */
+
       conversation.push({
         role: "assistant",
         content: assistantText,
       });
 
-      if (!assistantText) {
-        assistantBubble.textContent = "Generation stopped.";
+
+    } catch (error) {
+
+
+      /* -----------------------------
+         User stopped generation
+      ----------------------------- */
+
+      if (
+        error.name ===
+        "AbortError"
+      ) {
+
+        conversation.push({
+          role: "assistant",
+          content: assistantText,
+        });
+
+
+        if (!assistantText) {
+
+          assistantBubble.textContent =
+            "Generation stopped.";
+
+        }
+
+      } else {
+
+        /* -----------------------------
+           Normal error
+        ----------------------------- */
+
+        assistantBubble.classList.add(
+          "error"
+        );
+
+        assistantBubble.textContent =
+          error.message ||
+          "Failed to generate a response.";
       }
-    } else {
-      assistantBubble.classList.add("error");
-      assistantBubble.textContent =
-        error.message || "Failed to generate a response.";
+
+    } finally {
+
+      assistantBubble.classList.remove(
+        "streaming"
+      );
+
+      controller = null;
+
+      setGenerating(false);
+
+      messageInput.focus();
     }
-  } finally {
-    assistantBubble.classList.remove("streaming");
-
-    controller = null;
-    setGenerating(false);
-    messageInput.focus();
   }
-});
+);
 
-stopButton.addEventListener("click", () => {
-  if (controller) {
-    controller.abort();
+
+/* -----------------------------
+   Stop button
+----------------------------- */
+
+stopButton.addEventListener(
+  "click",
+  () => {
+
+    if (controller) {
+
+      controller.abort();
+
+    }
   }
-});
+);
+
+
+/* -----------------------------
+   Initial state
+----------------------------- */
+
+setGenerating(false);
+
+messageInput.focus();
