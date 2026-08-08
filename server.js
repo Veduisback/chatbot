@@ -1,6 +1,19 @@
 const express = require("express");
-const path = require("path");
-const { fileURLToPath } = require("url");
+
+const app = express();
+
+const PORT = process.env.PORT || 3000;
+
+const OPENROUTER_API_KEY = process.env.OPENROUTER_API_KEY;
+
+const MODEL =
+  process.env.OPENROUTER_MODEL || "openai/gpt-5.3-chat";
+
+/*
+ * CORS
+ * Allows the GitHub Pages frontend to communicate
+ * with the Render backend.
+ */
 app.use((req, res, next) => {
   res.setHeader(
     "Access-Control-Allow-Origin",
@@ -24,24 +37,11 @@ app.use((req, res, next) => {
   next();
 });
 
-const app = express();
-
-const PORT = process.env.PORT || 3000;
-const OPENROUTER_API_KEY = process.env.OPENROUTER_API_KEY;
-
-const MODEL =
-  process.env.OPENROUTER_MODEL || "openai/gpt-5.3-chat";
-
-if (!OPENROUTER_API_KEY) {
-  console.warn(
-    "WARNING: OPENROUTER_API_KEY is not configured."
-  );
-}
-
 app.use(express.json({ limit: "1mb" }));
 
-app.use(express.static(__dirname));
-
+/*
+ * Health check
+ */
 app.get("/health", (req, res) => {
   res.json({
     status: "ok",
@@ -49,6 +49,9 @@ app.get("/health", (req, res) => {
   });
 });
 
+/*
+ * Chat endpoint
+ */
 app.post("/api/chat", async (req, res) => {
   if (!OPENROUTER_API_KEY) {
     return res.status(500).json({
@@ -64,6 +67,11 @@ app.post("/api/chat", async (req, res) => {
     });
   }
 
+  /*
+   * Only allow user and assistant messages.
+   * Limit conversation history to prevent
+   * unnecessarily huge requests.
+   */
   const safeMessages = messages
     .filter(
       (message) =>
@@ -80,12 +88,14 @@ app.post("/api/chat", async (req, res) => {
     });
   }
 
-  const abortController = new AbortController();
+  const controller = new AbortController();
 
-  // If the browser stops the request, also stop the
-  // upstream OpenRouter request.
+  /*
+   * If the browser closes/stops the request,
+   * cancel the OpenRouter request as well.
+   */
   req.on("close", () => {
-    abortController.abort();
+    controller.abort();
   });
 
   try {
@@ -93,24 +103,33 @@ app.post("/api/chat", async (req, res) => {
       "https://openrouter.ai/api/v1/chat/completions",
       {
         method: "POST",
+
         headers: {
           Authorization: `Bearer ${OPENROUTER_API_KEY}`,
           "Content-Type": "application/json",
+
           "HTTP-Referer":
-            process.env.SITE_URL || "http://localhost:3000",
+            process.env.SITE_URL ||
+            "https://veduisback.github.io/chatbot/",
+
           "X-Title":
             process.env.SITE_NAME || "AI Chat",
         },
+
         body: JSON.stringify({
           model: MODEL,
           messages: safeMessages,
           stream: true,
           temperature: 0.7,
         }),
-        signal: abortController.signal,
+
+        signal: controller.signal,
       }
     );
 
+    /*
+     * OpenRouter returned an error.
+     */
     if (!response.ok) {
       const errorText = await response.text();
 
@@ -131,54 +150,96 @@ app.post("/api/chat", async (req, res) => {
       });
     }
 
+    /*
+     * Tell the browser that this is an SSE stream.
+     */
     res.status(200);
-    res.setHeader("Content-Type", "text/event-stream");
-    res.setHeader("Cache-Control", "no-cache");
-    res.setHeader("Connection", "keep-alive");
-    res.setHeader("X-Accel-Buffering", "no");
+
+    res.setHeader(
+      "Content-Type",
+      "text/event-stream"
+    );
+
+    res.setHeader(
+      "Cache-Control",
+      "no-cache"
+    );
+
+    res.setHeader(
+      "Connection",
+      "keep-alive"
+    );
+
+    res.setHeader(
+      "X-Accel-Buffering",
+      "no"
+    );
 
     const reader = response.body.getReader();
+
     const decoder = new TextDecoder();
+
+    let buffer = "";
 
     try {
       while (true) {
-        const { value, done } = await reader.read();
+        const { value, done } =
+          await reader.read();
 
         if (done) {
           break;
         }
 
-        const chunk = decoder.decode(value, {
+        buffer += decoder.decode(value, {
           stream: true,
         });
 
-        const lines = chunk.split("\n");
+        /*
+         * OpenRouter sends SSE events separated
+         * by blank lines.
+         */
+        const events = buffer.split("\n\n");
 
-        for (const line of lines) {
-          if (!line.startsWith("data:")) {
-            continue;
-          }
+        buffer = events.pop() || "";
 
-          const data = line.slice(5).trim();
+        for (const event of events) {
+          const lines = event.split("\n");
 
-          if (!data || data === "[DONE]") {
-            continue;
-          }
-
-          try {
-            const parsed = JSON.parse(data);
-            const content =
-              parsed.choices?.[0]?.delta?.content;
-
-            if (content) {
-              res.write(
-                `data: ${JSON.stringify({
-                  content,
-                })}\n\n`
-              );
+          for (const line of lines) {
+            if (!line.startsWith("data:")) {
+              continue;
             }
-          } catch {
-            // Ignore malformed/incomplete SSE chunks.
+
+            const data = line
+              .slice(5)
+              .trim();
+
+            if (!data) {
+              continue;
+            }
+
+            if (data === "[DONE]") {
+              continue;
+            }
+
+            try {
+              const parsed = JSON.parse(data);
+
+              const content =
+                parsed.choices?.[0]?.delta?.content;
+
+              if (content) {
+                res.write(
+                  `data: ${JSON.stringify({
+                    content,
+                  })}\n\n`
+                );
+              }
+            } catch (error) {
+              /*
+               * Ignore incomplete/malformed SSE chunks.
+               */
+            }
           }
         }
       }
@@ -187,10 +248,14 @@ app.post("/api/chat", async (req, res) => {
     }
 
     res.write("data: [DONE]\n\n");
+
     res.end();
   } catch (error) {
+    /*
+     * User clicked STOP or the browser closed
+     * the connection.
+     */
     if (error.name === "AbortError") {
-      // Client stopped generation.
       if (!res.writableEnded) {
         res.end();
       }
@@ -198,11 +263,15 @@ app.post("/api/chat", async (req, res) => {
       return;
     }
 
-    console.error("Server error:", error);
+    console.error(
+      "Server error:",
+      error
+    );
 
     if (!res.headersSent) {
       return res.status(500).json({
-        error: "Failed to connect to OpenRouter.",
+        error:
+          "Failed to connect to OpenRouter.",
       });
     }
 
@@ -210,6 +279,11 @@ app.post("/api/chat", async (req, res) => {
   }
 });
 
+/*
+ * Start server
+ */
 app.listen(PORT, () => {
-  console.log(`AI Chat running on port ${PORT}`);
+  console.log(
+    `AI Chat server running on port ${PORT}`
+  );
 });
