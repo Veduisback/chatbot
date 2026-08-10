@@ -1,35 +1,20 @@
+```javascript
 const API_URL = "https://chatbot-eqq8.onrender.com";
 
 const chatForm = document.getElementById("chatForm");
 const messageInput = document.getElementById("messageInput");
-
 const sendButton = document.getElementById("sendButton");
 const stopButton = document.getElementById("stopButton");
-
-const messagesContainer =
-  document.getElementById("messages");
-
-const welcome =
-  document.getElementById("welcome");
-
-const statusElement =
-  document.getElementById("status");
-
-const demoSuccess =
-  document.getElementById("demoSuccess");
-
-const demoError =
-  document.getElementById("demoError");
-
+const messagesContainer = document.getElementById("messages");
+const welcome = document.getElementById("welcome");
+const statusElement = document.getElementById("status");
+const demoSuccess = document.getElementById("demoSuccess");
+const demoError = document.getElementById("demoError");
 
 let conversation = [];
-
 let controller = null;
-
 let isGenerating = false;
-
 let lifecycleTimer = null;
-
 let lastSubmittedText = "";
 
 
@@ -38,26 +23,18 @@ let lastSubmittedText = "";
    ========================================================= */
 
 function addMessage(role, content = "") {
-
   if (welcome) {
     welcome.remove();
   }
 
-  const wrapper =
-    document.createElement("div");
+  const wrapper = document.createElement("div");
+  wrapper.className = `message ${role}`;
 
-  wrapper.className =
-    `message ${role}`;
-
-  const bubble =
-    document.createElement("div");
-
+  const bubble = document.createElement("div");
   bubble.className = "bubble";
-
   bubble.textContent = content;
 
   wrapper.appendChild(bubble);
-
   messagesContainer.appendChild(wrapper);
 
   scrollToBottom();
@@ -71,18 +48,16 @@ function addMessage(role, content = "") {
    ========================================================= */
 
 function scrollToBottom() {
-
   messagesContainer.scrollTop =
     messagesContainer.scrollHeight;
 }
 
 
 /* =========================================================
-   BUTTON STATE HELPERS
+   BUTTON STATE
    ========================================================= */
 
 function clearLifecycleStates() {
-
   sendButton.classList.remove(
     "is-loading",
     "is-success",
@@ -92,22 +67,16 @@ function clearLifecycleStates() {
 
   if (lifecycleTimer) {
     clearTimeout(lifecycleTimer);
-
     lifecycleTimer = null;
   }
 }
 
 
 function setButtonState(state) {
-
   clearLifecycleStates();
 
   if (state === "loading") {
-
-    sendButton.classList.add(
-      "is-loading"
-    );
-
+    sendButton.classList.add("is-loading");
     sendButton.disabled = true;
 
     sendButton.setAttribute(
@@ -118,13 +87,8 @@ function setButtonState(state) {
     return;
   }
 
-
   if (state === "success") {
-
-    sendButton.classList.add(
-      "is-success"
-    );
-
+    sendButton.classList.add("is-success");
     sendButton.disabled = true;
 
     sendButton.setAttribute(
@@ -135,9 +99,7 @@ function setButtonState(state) {
     return;
   }
 
-
   if (state === "error") {
-
     sendButton.classList.add(
       "is-error",
       "shake"
@@ -150,23 +112,14 @@ function setButtonState(state) {
       "Retry sending message"
     );
 
-    /*
-     * Remove shake after animation so the
-     * animation can be triggered again later.
-     */
-
     setTimeout(() => {
-      sendButton.classList.remove(
-        "shake"
-      );
+      sendButton.classList.remove("shake");
     }, 380);
 
     return;
   }
 
-
-  /* Idle */
-
+  // Idle
   sendButton.disabled = false;
 
   sendButton.setAttribute(
@@ -181,24 +134,16 @@ function setButtonState(state) {
    ========================================================= */
 
 function setGenerating(value) {
-
   isGenerating = value;
 
   messageInput.disabled = value;
-
   stopButton.hidden = !value;
 
   if (value) {
-
     setButtonState("loading");
-
-    statusElement.textContent =
-      "Generating...";
-
+    statusElement.textContent = "Generating...";
   } else {
-
-    statusElement.textContent =
-      "Ready";
+    statusElement.textContent = "Ready";
   }
 }
 
@@ -208,23 +153,17 @@ function setGenerating(value) {
    ========================================================= */
 
 function showSuccess() {
-
   setButtonState("success");
 
-  statusElement.textContent =
-    "Sent";
+  statusElement.textContent = "Sent";
 
-  lifecycleTimer =
-    setTimeout(() => {
+  lifecycleTimer = setTimeout(() => {
+    setButtonState("idle");
 
-      setButtonState("idle");
+    statusElement.textContent = "Ready";
 
-      statusElement.textContent =
-        "Ready";
-
-      messageInput.focus();
-
-    }, 1100);
+    messageInput.focus();
+  }, 1100);
 }
 
 
@@ -233,23 +172,18 @@ function showSuccess() {
    ========================================================= */
 
 function showError() {
-
   setButtonState("error");
 
-  statusElement.textContent =
-    "Failed — retry";
-
+  statusElement.textContent = "Failed — retry";
 }
 
 
 /* =========================================================
-   TEXTAREA AUTO RESIZE
+   TEXTAREA
    ========================================================= */
 
 function setInputHeight() {
-
-  messageInput.style.height =
-    "auto";
+  messageInput.style.height = "auto";
 
   messageInput.style.height =
     Math.min(
@@ -258,10 +192,6 @@ function setInputHeight() {
     ) + "px";
 }
 
-
-/* =========================================================
-   INPUT
-   ========================================================= */
 
 messageInput.addEventListener(
   "input",
@@ -276,12 +206,10 @@ messageInput.addEventListener(
 messageInput.addEventListener(
   "keydown",
   (event) => {
-
     if (
       event.key === "Enter" &&
       !event.shiftKey
     ) {
-
       event.preventDefault();
 
       if (!isGenerating) {
@@ -299,177 +227,94 @@ messageInput.addEventListener(
 chatForm.addEventListener(
   "submit",
   async (event) => {
-
     event.preventDefault();
 
     if (isGenerating) {
       return;
     }
 
+    let text = messageInput.value.trim();
 
-    /*
-     * If the button is showing an error,
-     * reuse the previous message.
-     */
-
-    let text =
-      messageInput.value.trim();
-
-
+    // Retry the previous message after an error.
     if (
-      sendButton.classList.contains(
-        "is-error"
-      )
+      sendButton.classList.contains("is-error")
     ) {
-
-      text =
-        lastSubmittedText ||
-        text;
+      text = lastSubmittedText || text;
     }
-
 
     if (!text) {
       return;
     }
 
-
-    /* ---------------------------------
-       Reset error state
-       --------------------------------- */
-
     clearLifecycleStates();
-
-
-    /* ---------------------------------
-       Save last message for retry
-       --------------------------------- */
 
     lastSubmittedText = text;
 
-
-    /* ---------------------------------
-       Clear input
-       --------------------------------- */
-
     messageInput.value = "";
-
     setInputHeight();
-
-
-    /* ---------------------------------
-       Add user message
-       --------------------------------- */
 
     conversation.push({
       role: "user",
-      content: text,
+      content: text
     });
 
-    addMessage(
-      "user",
-      text
-    );
-
-
-    /* ---------------------------------
-       Assistant message
-       --------------------------------- */
+    addMessage("user", text);
 
     const assistantBubble =
-      addMessage(
-        "assistant",
-        ""
-      );
+      addMessage("assistant", "");
 
     assistantBubble.classList.add(
       "streaming"
     );
 
-
-    /* ---------------------------------
-       Abort controller
-       --------------------------------- */
-
-    controller =
-      new AbortController();
-
+    controller = new AbortController();
 
     setGenerating(true);
 
-
     let assistantText = "";
 
-
     try {
+      const response = await fetch(
+        `${API_URL}/api/chat`,
+        {
+          method: "POST",
 
-      /* =================================================
-         REQUEST
-         ================================================= */
+          headers: {
+            "Content-Type":
+              "application/json"
+          },
 
-      const response =
-        await fetch(
-          `${API_URL}/api/chat`,
-          {
-            method: "POST",
+          body: JSON.stringify({
+            messages: conversation
+          }),
 
-            headers: {
-              "Content-Type":
-                "application/json",
-            },
-
-            body: JSON.stringify({
-              messages: conversation,
-            }),
-
-            signal:
-              controller.signal,
-          }
-        );
-
-
-      /* =================================================
-         HTTP ERROR
-         ================================================= */
+          signal: controller.signal
+        }
+      );
 
       if (!response.ok) {
-
         let errorMessage =
           "Something went wrong.";
 
         try {
-
           const errorData =
             await response.json();
 
           errorMessage =
             errorData.error ||
             errorMessage;
-
         } catch {
-          /* Ignore JSON parse error */
+          // Ignore JSON parsing failure.
         }
 
-        throw new Error(
-          errorMessage
-        );
+        throw new Error(errorMessage);
       }
 
-
-      /* =================================================
-         STREAM SUPPORT
-         ================================================= */
-
       if (!response.body) {
-
         throw new Error(
           "Streaming is not supported by this browser."
         );
       }
-
-
-      /* =================================================
-         READ STREAM
-         ================================================= */
 
       const reader =
         response.body.getReader();
@@ -479,72 +324,45 @@ chatForm.addEventListener(
 
       let buffer = "";
 
-
       while (true) {
-
         const {
           value,
-          done,
+          done
         } = await reader.read();
-
 
         if (done) {
           break;
         }
 
+        buffer += decoder.decode(
+          value,
+          {
+            stream: true
+          }
+        );
 
-        buffer +=
-          decoder.decode(
-            value,
-            {
-              stream: true,
-            }
-          );
-
-
-        /*
-         * Normalize CRLF.
-         */
-
-        buffer =
-          buffer.replace(
-            /\r\n/g,
-            "\n"
-          );
-
+        buffer = buffer.replace(
+          /\r\n/g,
+          "\n"
+        );
 
         const events =
           buffer.split("\n\n");
 
-
         buffer =
           events.pop() || "";
 
-
-        /* ---------------------------------------------
-           Process SSE events
-           --------------------------------------------- */
-
         for (const event of events) {
-
           const lines =
             event.split("\n");
 
-
           for (const line of lines) {
-
-            if (
-              !line.startsWith("data:")
-            ) {
+            if (!line.startsWith("data:")) {
               continue;
             }
 
-
             const data =
-              line
-                .slice(5)
-                .trim();
-
+              line.slice(5).trim();
 
             if (
               !data ||
@@ -553,77 +371,39 @@ chatForm.addEventListener(
               continue;
             }
 
+            let parsed;
 
             try {
+              parsed = JSON.parse(data);
+            } catch {
+              // Ignore malformed chunks.
+              continue;
+            }
 
-              const parsed =
-                JSON.parse(data);
+            if (parsed.type === "error") {
+              throw new Error(
+                parsed.error ||
+                "Generation failed."
+              );
+            }
 
+            if (parsed.content) {
+              assistantText +=
+                parsed.content;
 
-              /*
-               * Server-side streaming error.
-               */
+              assistantBubble.textContent =
+                assistantText;
 
-              if (
-                parsed.type === "error"
-              ) {
-
-                throw new Error(
-                  parsed.error ||
-                  "Generation failed."
-                );
-              }
-
-
-              /*
-               * Append streamed content.
-               */
-
-              if (parsed.content) {
-
-                assistantText +=
-                  parsed.content;
-
-                assistantBubble.textContent =
-                  assistantText;
-
-                scrollToBottom();
-              }
-
-            } catch (error) {
-
-              /*
-               * Only ignore malformed
-               * JSON chunks.
-               */
-
-              if (
-                error instanceof Error &&
-                error.message !==
-                  "Unexpected token"
-              ) {
-
-                throw error;
-              }
+              scrollToBottom();
             }
           }
         }
       }
 
-
-      /* =================================================
-         SAVE ASSISTANT RESPONSE
-         ================================================= */
-
       conversation.push({
         role: "assistant",
-        content: assistantText,
+        content: assistantText
       });
-
-
-      /*
-       * Successful generation.
-       */
 
       assistantBubble.classList.remove(
         "streaming"
@@ -631,40 +411,23 @@ chatForm.addEventListener(
 
       showSuccess();
 
-
     } catch (error) {
-
-
-      /* =================================================
-         USER STOPPED GENERATION
-         ================================================= */
-
       if (
-        error.name ===
-        "AbortError"
+        error.name === "AbortError"
       ) {
-
         conversation.push({
           role: "assistant",
-          content: assistantText,
+          content: assistantText
         });
 
-
         if (!assistantText) {
-
           assistantBubble.textContent =
             "Generation stopped.";
         }
 
-
         assistantBubble.classList.remove(
           "streaming"
         );
-
-
-        /*
-         * Stopping is not an error.
-         */
 
         clearLifecycleStates();
 
@@ -672,12 +435,6 @@ chatForm.addEventListener(
           "Stopped";
 
       } else {
-
-
-        /* =================================================
-           NORMAL ERROR
-           ================================================= */
-
         assistantBubble.classList.add(
           "error"
         );
@@ -686,37 +443,21 @@ chatForm.addEventListener(
           error.message ||
           "Failed to generate a response.";
 
-
         assistantBubble.classList.remove(
           "streaming"
         );
 
-
         showError();
       }
 
-
     } finally {
-
       controller = null;
 
-      /*
-       * Only unlock the input.
-       *
-       * The button's visual lifecycle is
-       * handled independently.
-       */
+      isGenerating = false;
 
-      messageInput.disabled =
-        isGenerating = false;
+      messageInput.disabled = false;
 
       stopButton.hidden = true;
-
-      /*
-       * Don't immediately reset the button
-       * because success/error needs to remain
-       * visible long enough to communicate state.
-       */
 
       if (
         !sendButton.classList.contains(
@@ -726,7 +467,6 @@ chatForm.addEventListener(
           "is-error"
         )
       ) {
-
         setButtonState("idle");
       }
 
@@ -737,15 +477,13 @@ chatForm.addEventListener(
 
 
 /* =========================================================
-   STOP BUTTON
+   STOP GENERATION
    ========================================================= */
 
 stopButton.addEventListener(
   "click",
   () => {
-
     if (controller) {
-
       controller.abort();
     }
   }
@@ -753,42 +491,30 @@ stopButton.addEventListener(
 
 
 /* =========================================================
-   DEMO: SUCCESS
+   DEMO SUCCESS
    ========================================================= */
 
 demoSuccess.addEventListener(
   "click",
   async () => {
-
     if (isGenerating) {
       return;
     }
 
-
     setGenerating(true);
-
 
     statusElement.textContent =
       "Demo: loading...";
-
-
-    /*
-     * Fake async operation.
-     */
 
     const delay =
       900 +
       Math.random() * 900;
 
-
     await new Promise(
-      (resolve) =>
-        setTimeout(
-          resolve,
-          delay
-        )
+      (resolve) => {
+        setTimeout(resolve, delay);
+      }
     );
-
 
     setGenerating(false);
 
@@ -798,38 +524,30 @@ demoSuccess.addEventListener(
 
 
 /* =========================================================
-   DEMO: ERROR
+   DEMO ERROR
    ========================================================= */
 
 demoError.addEventListener(
   "click",
   async () => {
-
     if (isGenerating) {
       return;
     }
 
-
     setGenerating(true);
-
 
     statusElement.textContent =
       "Demo: loading...";
-
 
     const delay =
       700 +
       Math.random() * 800;
 
-
     await new Promise(
-      (resolve) =>
-        setTimeout(
-          resolve,
-          delay
-        )
+      (resolve) => {
+        setTimeout(resolve, delay);
+      }
     );
-
 
     setGenerating(false);
 
@@ -843,9 +561,6 @@ demoError.addEventListener(
    ========================================================= */
 
 setGenerating(false);
-
 setButtonState("idle");
-
 setInputHeight();
-
-messageInput.focus();
+```
