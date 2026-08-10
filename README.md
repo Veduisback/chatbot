@@ -441,3 +441,233 @@ https://veduisback.github.io/vedang-s_personal_portfolio/
 ## 📄 License
 
 This project is intended primarily as a personal learning and portfolio project.
+
+AI Chat
+
+A lightweight full-stack AI chatbot with streaming responses, multi-turn conversations, generation cancellation, and an interactive CSS 3D background.
+
+Live Demo
+
+https://veduisback.github.io/chatbot/
+
+Features
+
+💬 Multi-turn conversations
+
+⚡ Streaming AI responses
+
+🛑 Stop generation while a response is streaming
+
+🔁 Retry after a failed request
+
+⌨️ Enter to send / Shift+Enter for a new line
+
+📱 Responsive mobile layout
+
+♿ Accessible labels, live status, focus states, and reduced-motion support
+
+🎨 Interactive CSS 3D cube, glow, and orbital background
+
+🧪 Test Success and Test Error controls
+
+🩺 Backend health endpoint
+
+🔐 OpenRouter API key stored server-side
+
+Architecture
+
+Browser
+   │
+   │ POST /api/chat
+   ▼
+Express Backend
+   │
+   │ OpenRouter API
+   ▼
+LLM
+   │
+   │ streaming response
+   ▼
+Express SSE stream
+   │
+   ▼
+Browser chat UI
+
+Tech Stack
+
+Frontend: HTML, CSS, Vanilla JavaScript, CSS 3D transforms, SSE stream reader
+
+Backend: Node.js, Express, Fetch API, AbortController
+
+AI: OpenRouter Chat Completions API
+
+Deployment: GitHub Pages + Render
+
+How It Works
+
+The user enters a message.
+
+The frontend stores it in an in-memory conversation array.
+
+The frontend sends the conversation to POST /api/chat.
+
+Express validates and sanitizes the messages.
+
+Express sends the request to OpenRouter.
+
+OpenRouter returns streamed model output.
+
+The backend converts the upstream chunks into Server-Sent Events.
+
+The browser reads the SSE stream.
+
+Each content chunk is appended to the assistant message.
+
+[DONE] closes the stream.
+
+API
+
+GET /
+
+Basic service status.
+
+GET /health
+
+Returns backend status and whether an OpenRouter key is configured.
+
+Example:
+
+{
+  "status": "ok",
+  "configured": true
+}
+
+POST /api/chat
+
+Example request:
+
+{
+  "messages": [
+    {
+      "role": "user",
+      "content": "Hello!"
+    }
+  ]
+}
+
+The response is streamed as SSE:
+
+data: {"content":"Hello"}
+
+and finishes with:
+
+data: [DONE]
+
+Environment Variables
+
+OPENROUTER_API_KEY=your_key_here
+OPENROUTER_MODEL=openai/gpt-5.3-chat
+SITE_URL=https://veduisback.github.io/chatbot/
+SITE_NAME=AI Chat
+
+Do not commit API keys.
+
+Local Development
+
+Install backend dependencies:
+
+npm install
+
+Set the environment variables and start:
+
+node server.js
+
+The backend uses PORT when supplied and otherwise defaults to 3000.
+
+The frontend is static and can be served by any local static HTTP server.
+
+Accessibility
+
+The UI includes:
+
+An accessible message-input label
+
+aria-live="polite" status feedback
+
+Keyboard message submission
+
+Keyboard-reachable Stop button
+
+Visible :focus-visible styles
+
+Reduced-motion support
+
+Recommended checks: Lighthouse, WAVE, and keyboard-only testing.
+
+Error Handling
+
+The application handles missing API configuration, invalid messages, OpenRouter HTTP errors, missing streams, aborted generation, stream parsing errors, and retry after failure.
+
+Testing Checklist
+
+Normal message
+
+Empty input
+
+Long/unusual input
+
+Rapid repeated submission
+
+Stop during streaming
+
+API/provider failure
+
+Retry after failure
+
+Keyboard-only navigation
+
+Mobile layout
+
+Reduced-motion mode
+
+Test Success
+
+Test Error
+
+Current Scope
+
+This project focuses on one core feature: a working streaming AI chat experience.
+
+Out of scope
+
+User accounts
+
+Persistent database-backed history
+
+File uploads
+
+RAG/document search
+
+Image generation
+
+Custom model training
+
+Autonomous agents/tool execution
+
+Project Goal
+
+The project demonstrates the complete flow:
+
+UI → backend API → validation → OpenRouter → streaming response → live UI update
+
+The main engineering value is understanding how the frontend, backend, external AI API, streaming transport, cancellation, and UI states work together.
+
+Live
+
+👉 https://veduisback.github.io/chatbot/
+
+Author
+
+Vedang Jaiswal
+
+GitHub: https://github.com/Veduisback
