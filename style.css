@@ -1,4 +1,3 @@
-
 * {
   box-sizing: border-box;
 }
@@ -37,9 +36,11 @@ button {
 
 .app {
   height: 100vh;
+
   display: flex;
   flex-direction: column;
 }
+
 
 /* =========================================================
    HEADER
@@ -56,6 +57,7 @@ button {
   padding: 0 24px;
 
   border-bottom: 1px solid #e5e5e5;
+
   background: #ffffff;
 }
 
@@ -69,6 +71,7 @@ button {
   color: #737373;
 }
 
+
 /* =========================================================
    MESSAGES
 ========================================================= */
@@ -78,7 +81,7 @@ button {
 
   overflow-y: auto;
 
-  padding: 32px 20px 180px;
+  padding: 32px 20px 150px;
 
   scroll-behavior: smooth;
 }
@@ -94,36 +97,8 @@ button {
 }
 
 .welcome-inner {
+  width: 100%;
   max-width: 600px;
-}
-
-/* =========================================================
-   ANIME.JS LOGO
-========================================================= */
-
-.logo-animation {
-  height: 46px;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  gap: 8px;
-
-  margin-bottom: 20px;
-}
-
-.logo-dot {
-  width: 12px;
-  height: 12px;
-
-  display: block;
-
-  border-radius: 50%;
-
-  background: #171717;
-
-  transform-origin: center;
 }
 
 .welcome h1 {
@@ -144,6 +119,7 @@ button {
   font-size: 15px;
 }
 
+
 /* =========================================================
    DEMO INFO
 ========================================================= */
@@ -151,27 +127,21 @@ button {
 .demo-info {
   margin-top: 28px;
 
-  display: inline-flex;
+  display: flex;
   flex-direction: column;
 
-  gap: 5px;
-
-  padding: 10px 14px;
-
-  border: 1px solid #e5e5e5;
-  border-radius: 10px;
-
-  background: #fafafa;
+  gap: 6px;
 
   font-size: 12px;
 
-  color: #737373;
+  color: #a3a3a3;
 }
 
 .demo-info span:first-child {
-  color: #171717;
+  color: #525252;
   font-weight: 600;
 }
+
 
 /* =========================================================
    CHAT MESSAGES
@@ -184,8 +154,6 @@ button {
   margin: 0 auto 20px;
 
   display: flex;
-
-  animation: messageAppear 250ms ease;
 }
 
 .message.user {
@@ -241,17 +209,6 @@ button {
   }
 }
 
-@keyframes messageAppear {
-  from {
-    opacity: 0;
-    transform: translateY(8px);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
 
 /* =========================================================
    COMPOSER
@@ -288,6 +245,7 @@ button {
   padding: 8px;
 
   border: 1px solid #d4d4d4;
+
   border-radius: 18px;
 
   background: #ffffff;
@@ -295,6 +253,11 @@ button {
   box-shadow:
     0 4px 20px rgba(0, 0, 0, 0.06);
 }
+
+
+/* =========================================================
+   INPUT
+========================================================= */
 
 #messageInput {
   flex: 1;
@@ -312,6 +275,7 @@ button {
   line-height: 20px;
 
   background: transparent;
+
   color: #171717;
 }
 
@@ -323,12 +287,12 @@ button {
   opacity: 0.6;
 }
 
+
 /* =========================================================
    SEND BUTTON
 ========================================================= */
 
-#sendButton,
-#stopButton {
+#sendButton {
   position: relative;
 
   min-width: 64px;
@@ -341,59 +305,60 @@ button {
 
   cursor: pointer;
 
+  background: #171717;
+  color: #ffffff;
+
   font-size: 14px;
   font-weight: 600;
 
   display: inline-flex;
+
   align-items: center;
   justify-content: center;
 
-  gap: 8px;
-
   overflow: hidden;
 
-  transition:
-    transform 180ms cubic-bezier(0.2, 0.8, 0.2, 1),
-    opacity 180ms ease,
-    background-color 220ms ease,
-    box-shadow 220ms ease;
+  transform-origin: center;
+
+  will-change:
+    transform,
+    width,
+    background-color;
 }
 
-#sendButton {
-  background: #171717;
-  color: #ffffff;
-}
+
+/* Hover */
 
 #sendButton:hover:not(:disabled) {
-  transform: translateY(-1px);
-
   box-shadow:
-    0 5px 14px rgba(0, 0, 0, 0.14);
+    0 6px 18px rgba(0, 0, 0, 0.15);
 }
 
-#sendButton:focus-visible,
-#stopButton:focus-visible,
-.demo-controls button:focus-visible {
-  outline: 3px solid rgba(23, 23, 23, 0.25);
+
+/* Keyboard focus */
+
+#sendButton:focus-visible {
+  outline: 3px solid rgba(23, 23, 23, 0.3);
   outline-offset: 3px;
 }
 
-#sendButton:active:not(:disabled) {
-  transform: translateY(1px) scale(0.97);
-}
+
+/* Disabled */
 
 #sendButton:disabled {
   cursor: not-allowed;
 }
 
+
 /* =========================================================
    BUTTON CONTENT
 ========================================================= */
 
-.send-content,
-.loading-content,
-.success-content,
-.error-content {
+.button-state {
+  position: absolute;
+
+  inset: 0;
+
   display: inline-flex;
 
   align-items: center;
@@ -401,43 +366,40 @@ button {
 
   gap: 7px;
 
-  transition:
-    opacity 180ms ease,
-    transform 220ms cubic-bezier(0.2, 0.8, 0.2, 1);
-}
-
-.loading-content,
-.success-content,
-.error-content {
-  position: absolute;
-
   opacity: 0;
 
+  transform:
+    translateY(10px)
+    scale(0.92);
+
   pointer-events: none;
+}
+
+.send-content {
+  position: relative;
+
+  opacity: 1;
 
   transform:
-    translateY(8px)
-    scale(0.96);
+    translateY(0)
+    scale(1);
 }
+
 
 /* =========================================================
    LOADING
 ========================================================= */
 
 #sendButton.is-loading {
-  cursor: wait;
+  min-width: 112px;
 
   background: #262626;
 
-  min-width: 110px;
+  cursor: wait;
 }
 
 #sendButton.is-loading .send-content {
   opacity: 0;
-
-  transform:
-    translateY(-8px)
-    scale(0.96);
 }
 
 #sendButton.is-loading .loading-content {
@@ -468,14 +430,15 @@ button {
   }
 }
 
+
 /* =========================================================
    SUCCESS
 ========================================================= */
 
 #sendButton.is-success {
-  background: #16803c;
+  min-width: 105px;
 
-  min-width: 110px;
+  background: #16803c;
 
   cursor: default;
 }
@@ -484,8 +447,6 @@ button {
 #sendButton.is-success .loading-content,
 #sendButton.is-success .error-content {
   opacity: 0;
-
-  transform: scale(0.9);
 }
 
 #sendButton.is-success .success-content {
@@ -497,8 +458,8 @@ button {
 }
 
 .success-icon {
-  width: 16px;
-  height: 16px;
+  width: 17px;
+  height: 17px;
 
   display: block;
 
@@ -508,43 +469,23 @@ button {
 
   stroke-linecap: round;
   stroke-linejoin: round;
-
-  animation:
-    successPop 300ms cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
-@keyframes successPop {
-  0% {
-    opacity: 0;
-    transform: scale(0.5);
-  }
-
-  70% {
-    transform: scale(1.15);
-  }
-
-  100% {
-    opacity: 1;
-    transform: scale(1);
-  }
-}
 
 /* =========================================================
    ERROR
 ========================================================= */
 
 #sendButton.is-error {
-  background: #c62828;
+  min-width: 105px;
 
-  min-width: 110px;
+  background: #c62828;
 }
 
 #sendButton.is-error .send-content,
 #sendButton.is-error .loading-content,
 #sendButton.is-error .success-content {
   opacity: 0;
-
-  transform: scale(0.9);
 }
 
 #sendButton.is-error .error-content {
@@ -555,62 +496,47 @@ button {
     scale(1);
 }
 
-#sendButton.shake {
-  animation:
-    buttonShake 360ms ease-in-out;
-}
-
-@keyframes buttonShake {
-  0%,
-  100% {
-    transform: translateX(0);
-  }
-
-  20% {
-    transform: translateX(-5px);
-  }
-
-  40% {
-    transform: translateX(5px);
-  }
-
-  60% {
-    transform: translateX(-4px);
-  }
-
-  80% {
-    transform: translateX(3px);
-  }
-}
-
 .error-icon {
-  width: 16px;
-  height: 16px;
+  width: 17px;
+  height: 17px;
 
   display: block;
 }
+
 
 /* =========================================================
    STOP BUTTON
 ========================================================= */
 
-#stopButton {
+.stop-button {
+  min-width: 64px;
+  height: 40px;
+
+  padding: 0 14px;
+
+  border: none;
+
+  border-radius: 12px;
+
+  cursor: pointer;
+
   background: #ef4444;
+
   color: #ffffff;
+
+  font-size: 14px;
+  font-weight: 600;
 }
 
-#stopButton:hover {
+.stop-button:hover {
   opacity: 0.85;
-
-  transform:
-    translateY(-1px);
 }
 
-#stopButton:active {
-  transform:
-    translateY(1px)
-    scale(0.97);
+.stop-button:focus-visible {
+  outline: 3px solid rgba(239, 68, 68, 0.3);
+  outline-offset: 3px;
 }
+
 
 /* =========================================================
    DEMO CONTROLS
@@ -634,27 +560,32 @@ button {
 
   background: #ffffff;
 
-  color: #171717;
+  color: #525252;
+
+  padding: 7px 11px;
 
   border-radius: 9px;
 
-  padding: 7px 12px;
+  font-size: 12px;
 
   cursor: pointer;
 
-  font-size: 12px;
-
   transition:
-    transform 160ms ease,
-    background-color 160ms ease;
+    background-color 160ms ease,
+    color 160ms ease,
+    border-color 160ms ease;
 }
 
 .demo-controls button:hover {
   background: #f5f5f5;
-
-  transform:
-    translateY(-1px);
+  border-color: #b5b5b5;
 }
+
+.demo-controls button:focus-visible {
+  outline: 2px solid #171717;
+  outline-offset: 2px;
+}
+
 
 /* =========================================================
    REDUCED MOTION
@@ -667,22 +598,15 @@ button {
   *::after {
     animation-duration: 1ms !important;
     animation-iteration-count: 1 !important;
-
     transition-duration: 1ms !important;
-
-    scroll-behavior: auto !important;
   }
 
   .spinner {
     animation: none;
   }
 
-  #sendButton:hover:not(:disabled),
-  #stopButton:hover,
-  .demo-controls button:hover {
-    transform: none;
-  }
 }
+
 
 /* =========================================================
    MOBILE
@@ -698,7 +622,9 @@ button {
 
   #messages {
     padding:
-      24px 12px 180px;
+      24px
+      12px
+      150px;
   }
 
   .bubble {
@@ -707,15 +633,16 @@ button {
 
   .composer-wrap {
     padding:
-      10px 10px 14px;
+      10px
+      10px
+      14px;
   }
 
   .composer {
     border-radius: 16px;
   }
 
-  #sendButton,
-  #stopButton {
+  #sendButton {
     min-width: 56px;
 
     padding:
@@ -728,6 +655,13 @@ button {
     min-width: 100px;
   }
 
+  .stop-button {
+    min-width: 56px;
+
+    padding:
+      0 10px;
+  }
+
   .welcome h1 {
     font-size: 36px;
   }
@@ -736,12 +670,8 @@ button {
     font-size: 14px;
   }
 
-  .demo-controls {
-    gap: 6px;
+  .demo-info {
+    margin-top: 22px;
   }
 
-  .demo-controls button {
-    padding:
-      6px 9px;
-  }
 }
