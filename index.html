@@ -1,218 +1,205 @@
 <!DOCTYPE html>
-
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8">
 
-<meta
- name="viewport"
- content="width=device-width, initial-scale=1.0"
-/>
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
 
-<meta
- name="description"
- content="AI Chat with animated button lifecycle interactions"
-/>
+  <meta
+    name="description"
+    content="Streaming AI Chat with an animated Send button lifecycle"
+  >
 
   <title>AI Chat</title>
 
-  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
   <div class="app">
 
-```
-<!-- Header -->
-<header class="header">
-  <div class="brand">
-    AI Chat
-  </div>
+    <!-- Header -->
+    <header class="header">
+      <div class="brand">
+        AI Chat
+      </div>
 
-  <div
-    id="status"
-    class="status"
-    aria-live="polite"
-  >
-    Ready
-  </div>
-</header>
+      <div
+        id="status"
+        class="status"
+        aria-live="polite"
+      >
+        Ready
+      </div>
+    </header>
 
 
-<!-- Messages -->
-<main id="messages">
+    <!-- Messages -->
+    <main id="messages">
 
-  <section
-    id="welcome"
-    class="welcome"
-  >
-    <div class="welcome-inner">
+      <section
+        id="welcome"
+        class="welcome"
+      >
+        <div class="welcome-inner">
 
-      <h1>Ask anything.</h1>
+          <h1>Ask anything.</h1>
 
-      <p>
-        A simple AI chatbot with streaming responses,
-        multi-turn conversations, and stoppable generation.
-      </p>
+          <p>
+            A simple AI chatbot with streaming responses,
+            multi-turn conversations, and stoppable generation.
+          </p>
 
-      <div class="demo-info">
-        <span>Button lifecycle</span>
-        <span>Idle → Loading → Success / Error</span>
+          <div class="demo-info">
+            <span>Button lifecycle</span>
+            <span>Idle → Hover → Loading → Success / Error</span>
+          </div>
+
+        </div>
+      </section>
+
+    </main>
+
+
+    <!-- Composer -->
+    <div class="composer-wrap">
+
+      <form
+        id="chatForm"
+        class="composer"
+      >
+
+        <textarea
+          id="messageInput"
+          rows="1"
+          placeholder="Message AI..."
+          aria-label="Message"
+          autocomplete="off"
+        ></textarea>
+
+
+        <!--
+          Send button.
+
+          All lifecycle states remain mounted so
+          transitions can happen instead of snapping.
+        -->
+        <button
+          id="sendButton"
+          type="submit"
+          aria-label="Send message"
+          aria-live="polite"
+        >
+
+          <!-- IDLE -->
+          <span class="send-content">
+            <span>Send</span>
+          </span>
+
+
+          <!-- LOADING -->
+          <span
+            class="loading-content"
+            aria-hidden="true"
+          >
+            <span
+              class="spinner"
+              aria-hidden="true"
+            ></span>
+
+            <span>Sending</span>
+          </span>
+
+
+          <!-- SUCCESS -->
+          <span
+            class="success-content"
+            aria-hidden="true"
+          >
+            <svg
+              class="success-icon"
+              viewBox="0 0 24 24"
+              fill="none"
+              aria-hidden="true"
+            >
+              <path d="M5 12.5L9.5 17L19 7"></path>
+            </svg>
+
+            <span>Sent</span>
+          </span>
+
+
+          <!-- ERROR -->
+          <span
+            class="error-content"
+            aria-hidden="true"
+          >
+            <svg
+              class="error-icon"
+              viewBox="0 0 24 24"
+              fill="none"
+              aria-hidden="true"
+            >
+              <circle
+                cx="12"
+                cy="12"
+                r="9"
+              ></circle>
+
+              <path d="M12 8v5"></path>
+
+              <path d="M12 16h.01"></path>
+            </svg>
+
+            <span>Retry</span>
+          </span>
+
+        </button>
+
+
+        <!-- Stop generation -->
+        <button
+          id="stopButton"
+          type="button"
+          aria-label="Stop generation"
+          hidden
+        >
+          Stop
+        </button>
+
+      </form>
+
+
+      <!-- Demo controls -->
+      <div class="demo-controls">
+
+        <button
+          id="demoSuccess"
+          type="button"
+        >
+          Test Success
+        </button>
+
+        <button
+          id="demoError"
+          type="button"
+        >
+          Test Error
+        </button>
+
       </div>
 
     </div>
-  </section>
-
-</main>
-
-
-<!-- Composer -->
-<div class="composer-wrap">
-
-  <form
-    id="chatForm"
-    class="composer"
-  >
-
-    <textarea
-      id="messageInput"
-      rows="1"
-      placeholder="Message AI..."
-      aria-label="Message"
-      autocomplete="off"
-    ></textarea>
-
-
-    <!--
-      Animated lifecycle button.
-
-      The four states remain in the DOM so that
-      CSS can transition between them.
-    -->
-    <button
-      id="sendButton"
-      type="submit"
-      aria-label="Send message"
-      aria-live="polite"
-    >
-
-      <!-- IDLE -->
-      <span class="send-content">
-        <span>Send</span>
-      </span>
-
-
-      <!-- LOADING -->
-      <span
-        class="loading-content"
-        aria-hidden="true"
-      >
-        <span
-          class="spinner"
-          aria-hidden="true"
-        ></span>
-
-        <span>Sending</span>
-      </span>
-
-
-      <!-- SUCCESS -->
-      <span
-        class="success-content"
-        aria-hidden="true"
-      >
-
-        <svg
-          class="success-icon"
-          viewBox="0 0 24 24"
-          fill="none"
-          aria-hidden="true"
-        >
-          <path d="M5 12.5L9.5 17L19 7"></path>
-        </svg>
-
-        <span>Sent</span>
-
-      </span>
-
-
-      <!-- ERROR -->
-      <span
-        class="error-content"
-        aria-hidden="true"
-      >
-
-        <svg
-          class="error-icon"
-          viewBox="0 0 24 24"
-          fill="none"
-          aria-hidden="true"
-        >
-          <circle
-            cx="12"
-            cy="12"
-            r="9"
-          ></circle>
-
-          <path d="M12 8v5"></path>
-
-          <path d="M12 16h.01"></path>
-        </svg>
-
-        <span>Retry</span>
-
-      </span>
-
-    </button>
-
-
-    <!-- Stop generation -->
-    <button
-      id="stopButton"
-      type="button"
-      style="display: none;"
-      aria-label="Stop generation"
-    >
-      Stop
-    </button>
-
-  </form>
-
-
-  <!--
-    Demo controls.
-
-    These allow the evaluator to trigger both
-    success and error states without requiring
-    a real API response.
-  -->
-  <div class="demo-controls">
-
-    <button
-      id="demoSuccess"
-      type="button"
-    >
-      Test Success
-    </button>
-
-    <button
-      id="demoError"
-      type="button"
-    >
-      Test Error
-    </button>
 
   </div>
 
-</div>
-```
 
-  </div>
-
-  <!-- Your existing JavaScript -->
-
-  <script src="script.js"></script>
+  <!-- IMPORTANT: your project uses app.js -->
+  <script src="app.js"></script>
 
 </body>
 </html>
