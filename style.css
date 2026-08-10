@@ -1,7 +1,3 @@
-/* =========================================================
-   RESET
-   ========================================================= */
-
 * {
   box-sizing: border-box;
 }
@@ -10,10 +6,11 @@ html,
 body {
   margin: 0;
   padding: 0;
-
   width: 100%;
   height: 100%;
+}
 
+body {
   font-family:
     Inter,
     system-ui,
@@ -22,97 +19,330 @@ body {
     "Segoe UI",
     sans-serif;
 
-  background: #f7f7f8;
-  color: #171717;
-}
+  background:
+    radial-gradient(
+      circle at center,
+      #242424 0%,
+      #101010 45%,
+      #050505 100%
+    );
 
+  color: #ffffff;
 
-/* =========================================================
-   BODY
-   ========================================================= */
-
-body {
   overflow: hidden;
 }
 
 
 /* =========================================================
-   3D BACKGROUND
-   ========================================================= */
+   ACCESSIBILITY
+========================================================= */
 
-#three-bg {
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+
+/* =========================================================
+   3D SCENE
+========================================================= */
+
+#scene {
   position: fixed;
-
   inset: 0;
-
-  width: 100%;
-  height: 100%;
 
   z-index: 0;
 
   pointer-events: none;
 
-  display: block;
+  perspective: 1000px;
+
+  overflow: hidden;
 }
 
 
 /* =========================================================
-   APPLICATION
-   ========================================================= */
+   CUBE
+========================================================= */
 
-.app {
-  position: relative;
+.cube {
+  position: absolute;
 
-  z-index: 1;
+  width: 170px;
+  height: 170px;
 
-  width: 100%;
-  height: 100vh;
+  left: 50%;
+  top: 40%;
 
-  display: flex;
-  flex-direction: column;
+  transform-style: preserve-3d;
 
-  pointer-events: none;
+  transform:
+    translate(-50%, -50%)
+    rotateX(-20deg)
+    rotateY(35deg);
+
+  transition:
+    transform 120ms linear;
+
+  will-change: transform;
 }
 
 
-/*
- * Everything interactive inside the app
- * must remain clickable.
- */
+.face {
+  position: absolute;
 
-.header,
-#messages,
-.composer-wrap {
-  pointer-events: auto;
+  width: 170px;
+  height: 170px;
+
+  border: 1px solid
+    rgba(255, 255, 255, 0.16);
+
+  background:
+    linear-gradient(
+      135deg,
+      rgba(255, 255, 255, 0.12),
+      rgba(255, 255, 255, 0.025)
+    );
+
+  backdrop-filter: blur(2px);
+
+  box-shadow:
+    inset 0 0 35px
+      rgba(255, 255, 255, 0.035);
+
+  backface-visibility: visible;
+}
+
+
+/* Front */
+
+.front {
+  transform:
+    translateZ(85px);
+}
+
+
+/* Back */
+
+.back {
+  transform:
+    rotateY(180deg)
+    translateZ(85px);
+}
+
+
+/* Right */
+
+.right {
+  transform:
+    rotateY(90deg)
+    translateZ(85px);
+}
+
+
+/* Left */
+
+.left {
+  transform:
+    rotateY(-90deg)
+    translateZ(85px);
+}
+
+
+/* Top */
+
+.top {
+  transform:
+    rotateX(90deg)
+    translateZ(85px);
+}
+
+
+/* Bottom */
+
+.bottom {
+  transform:
+    rotateX(-90deg)
+    translateZ(85px);
+}
+
+
+/* =========================================================
+   GLOW
+========================================================= */
+
+.glow {
+  position: absolute;
+
+  width: 380px;
+  height: 380px;
+
+  left: 50%;
+  top: 40%;
+
+  transform:
+    translate(-50%, -50%);
+
+  border-radius: 50%;
+
+  background:
+    radial-gradient(
+      circle,
+      rgba(255, 255, 255, 0.12),
+      rgba(255, 255, 255, 0.025) 45%,
+      transparent 70%
+    );
+
+  filter: blur(30px);
+
+  animation:
+    glowPulse 4s ease-in-out infinite;
+}
+
+
+@keyframes glowPulse {
+
+  0%,
+  100% {
+    opacity: 0.55;
+    transform:
+      translate(-50%, -50%)
+      scale(0.9);
+  }
+
+  50% {
+    opacity: 1;
+    transform:
+      translate(-50%, -50%)
+      scale(1.08);
+  }
+}
+
+
+/* =========================================================
+   ORBITS
+========================================================= */
+
+.orbital {
+  position: absolute;
+
+  left: 50%;
+  top: 40%;
+
+  width: 340px;
+  height: 120px;
+
+  transform:
+    translate(-50%, -50%)
+    rotateX(65deg);
+
+  border:
+
+    1px solid
+    rgba(255, 255, 255, 0.08);
+
+  border-radius: 50%;
+
+  animation:
+    orbitSpin 8s linear infinite;
+}
+
+
+.orbital-2 {
+
+  width: 440px;
+  height: 150px;
+
+  transform:
+    translate(-50%, -50%)
+    rotateX(65deg)
+    rotateZ(60deg);
+
+  animation-duration: 12s;
+
+  opacity: 0.45;
+}
+
+
+@keyframes orbitSpin {
+
+  from {
+    transform:
+      translate(-50%, -50%)
+      rotateX(65deg)
+      rotateZ(0deg);
+  }
+
+  to {
+    transform:
+      translate(-50%, -50%)
+      rotateX(65deg)
+      rotateZ(360deg);
+  }
+
+}
+
+
+/* =========================================================
+   APP
+========================================================= */
+
+.app {
+
+  position: relative;
+
+  z-index: 2;
+
+  height: 100vh;
+
+  display: flex;
+
+  flex-direction: column;
+
+  background:
+    rgba(0, 0, 0, 0.05);
 }
 
 
 /* =========================================================
    HEADER
-   ========================================================= */
+========================================================= */
 
 .header {
+
   height: 60px;
 
   flex-shrink: 0;
 
   display: flex;
+
   align-items: center;
+
   justify-content: space-between;
 
   padding: 0 24px;
 
-  background: rgba(255, 255, 255, 0.42);
-
   border-bottom:
-    1px solid rgba(0, 0, 0, 0.08);
+    1px solid
+    rgba(255, 255, 255, 0.1);
 
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  background:
+    rgba(0, 0, 0, 0.18);
+
+  backdrop-filter:
+    blur(12px);
 }
 
 
 .brand {
+
   font-size: 17px;
 
   font-weight: 650;
@@ -122,21 +352,20 @@ body {
 
 
 .status {
+
   font-size: 13px;
 
-  color: #666;
-
-  transition:
-    color 220ms ease,
-    opacity 220ms ease;
+  color:
+    rgba(255, 255, 255, 0.55);
 }
 
 
 /* =========================================================
    MESSAGES
-   ========================================================= */
+========================================================= */
 
 #messages {
+
   flex: 1;
 
   overflow-y: auto;
@@ -144,20 +373,15 @@ body {
   padding:
     32px
     20px
-    160px;
+    180px;
 
   scroll-behavior: smooth;
-
-  scrollbar-width: thin;
 }
 
 
-/* =========================================================
-   WELCOME
-   ========================================================= */
-
 .welcome {
-  min-height: 65%;
+
+  min-height: 60%;
 
   display: flex;
 
@@ -170,30 +394,38 @@ body {
 
 
 .welcome-inner {
-  max-width: 620px;
+
+  max-width: 600px;
 
   padding: 30px;
 }
 
 
 .welcome h1 {
-  margin: 0 0 14px;
+
+  margin:
+    0 0 12px;
 
   font-size:
-    clamp(36px, 7vw, 58px);
+    clamp(34px, 6vw, 54px);
 
-  line-height: 1.05;
+  letter-spacing:
+    -2px;
 
-  letter-spacing: -2px;
+  text-shadow:
+    0 0 30px
+    rgba(255, 255, 255, 0.15);
 }
 
 
 .welcome p {
+
   margin: 0;
 
   line-height: 1.6;
 
-  color: #666;
+  color:
+    rgba(255, 255, 255, 0.62);
 
   font-size: 15px;
 }
@@ -201,144 +433,157 @@ body {
 
 /* =========================================================
    DEMO INFO
-   ========================================================= */
+========================================================= */
 
 .demo-info {
+
   margin-top: 24px;
 
   display: flex;
 
-  justify-content: center;
+  flex-direction: column;
 
-  flex-wrap: wrap;
-
-  gap: 8px 14px;
+  gap: 6px;
 
   font-size: 12px;
 
-  color: #737373;
-}
-
-
-.demo-info span {
-  padding:
-    6px 10px;
-
-  border-radius: 999px;
-
-  background:
-    rgba(255, 255, 255, 0.45);
-
-  border:
-    1px solid rgba(0, 0, 0, 0.08);
-
-  backdrop-filter: blur(8px);
+  color:
+    rgba(255, 255, 255, 0.42);
 }
 
 
 /* =========================================================
    CHAT MESSAGES
-   ========================================================= */
+========================================================= */
 
 .message {
+
   width: 100%;
 
   max-width: 800px;
 
   margin:
-    0 auto 20px;
+    0 auto
+    20px;
 
   display: flex;
 }
 
 
 .message.user {
-  justify-content: flex-end;
+
+  justify-content:
+    flex-end;
 }
 
 
 .message.assistant {
-  justify-content: flex-start;
+
+  justify-content:
+    flex-start;
 }
 
 
 .bubble {
+
   max-width:
     min(75%, 650px);
 
   padding:
-    12px 16px;
+    12px
+    16px;
 
-  border-radius: 16px;
+  border-radius:
+    16px;
 
-  line-height: 1.55;
+  line-height:
+    1.55;
 
-  white-space: pre-wrap;
+  white-space:
+    pre-wrap;
 
-  overflow-wrap: anywhere;
+  overflow-wrap:
+    anywhere;
 
-  backdrop-filter: blur(10px);
-
-  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter:
+    blur(12px);
 }
 
 
 .message.user .bubble {
+
   background:
-    rgba(23, 23, 23, 0.88);
+    rgba(255, 255, 255, 0.9);
 
-  color: #fff;
+  color:
+    #111111;
 
-  border-bottom-right-radius: 5px;
+  border-bottom-right-radius:
+    5px;
 }
 
 
 .message.assistant .bubble {
-  background:
-    rgba(243, 243, 243, 0.72);
 
-  color: #171717;
+  background:
+    rgba(255, 255, 255, 0.08);
 
   border:
-    1px solid rgba(0, 0, 0, 0.06);
+    1px solid
+    rgba(255, 255, 255, 0.1);
 
-  border-bottom-left-radius: 5px;
+  color:
+    #ffffff;
+
+  border-bottom-left-radius:
+    5px;
 }
 
 
-.message.assistant .bubble.streaming:empty::after {
-  content: "▌";
+.message.assistant
+.bubble.streaming:empty::after {
+
+  content:
+    "▌";
 
   animation:
     blink 0.8s infinite;
 }
 
 
-.message.assistant .bubble.error {
-  color: #b42318;
+.message.assistant
+.bubble.error {
+
+  color:
+    #ff8d8d;
 
   background:
-    rgba(255, 241, 240, 0.88);
+    rgba(255, 40, 40, 0.1);
 }
 
 
 @keyframes blink {
+
   50% {
     opacity: 0;
   }
+
 }
 
 
 /* =========================================================
-   COMPOSER AREA
-   ========================================================= */
+   COMPOSER
+========================================================= */
 
 .composer-wrap {
+
   position: fixed;
 
   left: 0;
   right: 0;
   bottom: 0;
+
+  z-index: 10;
 
   padding:
     16px
@@ -348,20 +593,14 @@ body {
   background:
     linear-gradient(
       to top,
-      rgba(247, 247, 248, 0.88) 15%,
-      rgba(247, 247, 248, 0.45) 60%,
-      rgba(247, 247, 248, 0) 100%
+      rgba(0, 0, 0, 0.75),
+      rgba(0, 0, 0, 0)
     );
-
-  z-index: 5;
 }
 
 
-/* =========================================================
-   COMPOSER
-   ========================================================= */
-
 .composer {
+
   width: 100%;
 
   max-width: 800px;
@@ -377,42 +616,30 @@ body {
   padding: 8px;
 
   border:
-    1px solid rgba(0, 0, 0, 0.12);
+    1px solid
+    rgba(255, 255, 255, 0.18);
 
-  border-radius: 18px;
+  border-radius:
+    18px;
 
   background:
-    rgba(255, 255, 255, 0.48);
+    rgba(255, 255, 255, 0.08);
+
+  backdrop-filter:
+    blur(18px);
 
   box-shadow:
-    0 12px 40px
-    rgba(0, 0, 0, 0.10);
-
-  backdrop-filter: blur(16px);
-
-  -webkit-backdrop-filter: blur(16px);
-
-  transition:
-    border-color 200ms ease,
-    box-shadow 200ms ease;
-}
-
-
-.composer:focus-within {
-  border-color:
-    rgba(23, 23, 23, 0.25);
-
-  box-shadow:
-    0 14px 44px
-    rgba(0, 0, 0, 0.13);
+    0 10px 50px
+    rgba(0, 0, 0, 0.35);
 }
 
 
 /* =========================================================
-   TEXT INPUT
-   ========================================================= */
+   INPUT
+========================================================= */
 
 #messageInput {
+
   flex: 1;
 
   min-height: 42px;
@@ -431,30 +658,34 @@ body {
 
   line-height: 20px;
 
-  background: transparent;
+  background:
+    transparent;
 
-  color: #171717;
+  color:
+    #ffffff;
 }
 
 
 #messageInput::placeholder {
-  color: #888;
+
+  color:
+    rgba(255, 255, 255, 0.4);
 }
 
 
 #messageInput:disabled {
-  opacity: 0.6;
 
-  cursor: not-allowed;
+  opacity: 0.5;
 }
 
 
 /* =========================================================
    SEND + STOP BUTTONS
-   ========================================================= */
+========================================================= */
 
 #sendButton,
 #stopButton {
+
   position: relative;
 
   min-width: 70px;
@@ -466,7 +697,8 @@ body {
 
   border: none;
 
-  border-radius: 12px;
+  border-radius:
+    12px;
 
   cursor: pointer;
 
@@ -485,63 +717,81 @@ body {
   overflow: hidden;
 
   transition:
-    transform 180ms cubic-bezier(0.2, 0.8, 0.2, 1),
-    opacity 180ms ease,
+    transform 180ms ease,
     background-color 220ms ease,
-    box-shadow 220ms ease,
-    color 220ms ease;
+    box-shadow 220ms ease;
 }
 
 
 #sendButton {
-  background: #171717;
 
-  color: #fff;
+  background:
+    rgba(255, 255, 255, 0.95);
+
+  color:
+    #111111;
 }
 
 
-#sendButton:hover:not(:disabled) {
+#stopButton {
+
+  background:
+    #ef4444;
+
+  color:
+    white;
+}
+
+
+/* Hover */
+
+#sendButton:hover:not(:disabled),
+#stopButton:hover {
+
   transform:
     translateY(-1px);
 
   box-shadow:
-    0 5px 14px
-    rgba(0, 0, 0, 0.18);
+    0 5px 20px
+    rgba(0, 0, 0, 0.25);
 }
 
 
-#sendButton:focus-visible,
-#stopButton:focus-visible,
-.demo-controls button:focus-visible {
-  outline:
-    3px solid
-    rgba(23, 23, 23, 0.3);
-
-  outline-offset: 3px;
-}
-
+/* Active */
 
 #sendButton:active:not(:disabled),
 #stopButton:active {
+
   transform:
-    translateY(1px)
-    scale(0.97);
+    scale(0.96);
 }
 
 
-#sendButton:disabled {
-  cursor: not-allowed;
+/* Focus */
+
+#sendButton:focus-visible,
+#stopButton:focus-visible,
+#demoSuccess:focus-visible,
+#demoError:focus-visible {
+
+  outline:
+    3px solid
+    rgba(255, 255, 255, 0.45);
+
+  outline-offset:
+    3px;
 }
 
 
 /* =========================================================
    BUTTON CONTENT
-   ========================================================= */
+========================================================= */
 
 .send-content,
 .loading-content,
 .success-content,
 .error-content {
+
   display: inline-flex;
 
   align-items: center;
@@ -552,13 +802,14 @@ body {
 
   transition:
     opacity 180ms ease,
-    transform 220ms cubic-bezier(0.2, 0.8, 0.2, 1);
+    transform 220ms ease;
 }
 
 
 .loading-content,
 .success-content,
 .error-content {
+
   position: absolute;
 
   opacity: 0;
@@ -573,18 +824,24 @@ body {
 
 /* =========================================================
    LOADING
-   ========================================================= */
+========================================================= */
 
 #sendButton.is-loading {
+
   cursor: wait;
 
-  background: #262626;
-
   min-width: 110px;
+
+  background:
+    rgba(255, 255, 255, 0.18);
+
+  color: white;
 }
 
 
-#sendButton.is-loading .send-content {
+#sendButton.is-loading
+.send-content {
+
   opacity: 0;
 
   transform:
@@ -593,7 +850,9 @@ body {
 }
 
 
-#sendButton.is-loading .loading-content {
+#sendButton.is-loading
+.loading-content {
+
   opacity: 1;
 
   transform:
@@ -602,16 +861,20 @@ body {
 }
 
 
+/* Spinner */
+
 .spinner {
+
   width: 15px;
 
   height: 15px;
 
   border:
     2px solid
-    rgba(255, 255, 255, 0.3);
+    rgba(255, 255, 255, 0.25);
 
-  border-top-color: #fff;
+  border-top-color:
+    white;
 
   border-radius: 50%;
 
@@ -621,28 +884,39 @@ body {
 
 
 @keyframes spinnerRotate {
+
   to {
-    transform: rotate(360deg);
+    transform:
+      rotate(360deg);
   }
+
 }
 
 
 /* =========================================================
    SUCCESS
-   ========================================================= */
+========================================================= */
 
 #sendButton.is-success {
-  background: #16803c;
 
   min-width: 110px;
 
   cursor: default;
+
+  background:
+    #16803c;
+
+  color: white;
 }
 
 
-#sendButton.is-success .send-content,
-#sendButton.is-success .loading-content,
-#sendButton.is-success .error-content {
+#sendButton.is-success
+.send-content,
+#sendButton.is-success
+.loading-content,
+#sendButton.is-success
+.error-content {
+
   opacity: 0;
 
   transform:
@@ -650,39 +924,43 @@ body {
 }
 
 
-#sendButton.is-success .success-content {
+#sendButton.is-success
+.success-content {
+
   opacity: 1;
 
   transform:
-    translateY(0)
     scale(1);
 }
 
 
 .success-icon {
+
   width: 16px;
 
   height: 16px;
 
-  display: block;
+  stroke:
+    currentColor;
 
-  stroke: currentColor;
+  stroke-width:
+    2.5;
 
-  stroke-width: 2.5;
+  stroke-linecap:
+    round;
 
-  stroke-linecap: round;
-
-  stroke-linejoin: round;
+  stroke-linejoin:
+    round;
 
   animation:
-    successPop
-    300ms
-    cubic-bezier(0.2, 0.8, 0.2, 1);
+    successPop 300ms ease;
 }
 
 
 @keyframes successPop {
+
   0% {
+
     opacity: 0;
 
     transform:
@@ -690,33 +968,44 @@ body {
   }
 
   70% {
+
     transform:
       scale(1.15);
   }
 
   100% {
+
     opacity: 1;
 
     transform:
       scale(1);
   }
+
 }
 
 
 /* =========================================================
    ERROR
-   ========================================================= */
+========================================================= */
 
 #sendButton.is-error {
-  background: #c62828;
 
   min-width: 110px;
+
+  background:
+    #c62828;
+
+  color: white;
 }
 
 
-#sendButton.is-error .send-content,
-#sendButton.is-error .loading-content,
-#sendButton.is-error .success-content {
+#sendButton.is-error
+.send-content,
+#sendButton.is-error
+.loading-content,
+#sendButton.is-error
+.success-content {
+
   opacity: 0;
 
   transform:
@@ -724,24 +1013,27 @@ body {
 }
 
 
-#sendButton.is-error .error-content {
+#sendButton.is-error
+.error-content {
+
   opacity: 1;
 
   transform:
-    translateY(0)
     scale(1);
 }
 
 
+/* Error shake */
+
 #sendButton.shake {
+
   animation:
-    buttonShake
-    360ms
-    ease-in-out;
+    buttonShake 360ms ease-in-out;
 }
 
 
 @keyframes buttonShake {
+
   0%,
   100% {
     transform:
@@ -767,203 +1059,256 @@ body {
     transform:
       translateX(3px);
   }
-}
 
-
-.error-icon {
-  width: 16px;
-
-  height: 16px;
-
-  display: block;
 }
 
 
 /* =========================================================
-   STOP BUTTON
-   ========================================================= */
-
-#stopButton {
-  background: #ef4444;
-
-  color: #fff;
-}
-
-
-#stopButton:hover {
-  opacity: 0.88;
-
-  transform:
-    translateY(-1px);
-}
-
-
-/* =========================================================
-   DEMO CONTROLS
-   ========================================================= */
+   DEMO BUTTONS
+========================================================= */
 
 .demo-controls {
+
   width: 100%;
 
   max-width: 800px;
 
   margin:
-    10px auto 0;
+    10px auto
+    0;
 
   display: flex;
 
-  justify-content: center;
+  justify-content:
+    center;
 
   gap: 8px;
 }
 
 
 .demo-controls button {
-  border:
-    1px solid
-    rgba(0, 0, 0, 0.1);
-
-  background:
-    rgba(255, 255, 255, 0.45);
-
-  color: #555;
-
-  border-radius: 999px;
 
   padding:
-    6px 11px;
+    7px
+    12px;
 
-  font-size: 11px;
+  border:
+    1px solid
+    rgba(255, 255, 255, 0.12);
 
-  cursor: pointer;
+  border-radius:
+    9px;
 
-  backdrop-filter: blur(8px);
+  background:
+    rgba(255, 255, 255, 0.05);
 
-  -webkit-backdrop-filter: blur(8px);
+  color:
+    rgba(255, 255, 255, 0.55);
+
+  cursor:
+    pointer;
+
+  font-size:
+    11px;
 
   transition:
     background 180ms ease,
-    transform 180ms ease;
+    color 180ms ease;
 }
 
 
 .demo-controls button:hover {
-  background:
-    rgba(255, 255, 255, 0.75);
 
-  transform:
-    translateY(-1px);
+  background:
+    rgba(255, 255, 255, 0.1);
+
+  color:
+    white;
 }
 
 
 /* =========================================================
    REDUCED MOTION
-   ========================================================= */
+========================================================= */
 
 @media (prefers-reduced-motion: reduce) {
 
-  #sendButton,
-  #stopButton,
-  .send-content,
-  .loading-content,
-  .success-content,
-  .error-content {
-    transition-duration:
-      1ms !important;
+  *,
+  *::before,
+  *::after {
 
     animation-duration:
       1ms !important;
+
+    animation-iteration-count:
+      1 !important;
+
+    transition-duration:
+      1ms !important;
   }
 
-  .spinner {
-    animation: none;
-  }
-
-  #sendButton:hover:not(:disabled),
-  #stopButton:hover {
-    transform: none;
-  }
-
-  #sendButton:active:not(:disabled),
-  #stopButton:active {
-    transform:
-      scale(0.98);
-  }
 }
 
 
 /* =========================================================
    MOBILE
-   ========================================================= */
+========================================================= */
 
 @media (max-width: 600px) {
 
   .header {
+
     height: 54px;
 
     padding:
       0 16px;
   }
 
+
   #messages {
+
     padding:
       24px
       12px
-      145px;
+      180px;
   }
+
 
   .bubble {
-    max-width: 88%;
+
+    max-width:
+      88%;
   }
 
+
   .composer-wrap {
+
     padding:
       10px
       10px
       14px;
   }
 
-  .composer {
-    border-radius: 16px;
 
-    padding: 7px;
+  .composer {
+
+    border-radius:
+      16px;
   }
+
 
   #sendButton,
   #stopButton {
-    min-width: 58px;
+
+    min-width:
+      56px;
 
     padding:
       0 10px;
   }
 
+
   #sendButton.is-loading,
   #sendButton.is-success,
   #sendButton.is-error {
-    min-width: 100px;
+
+    min-width:
+      100px;
   }
 
-  .welcome-inner {
-    padding:
-      20px;
-  }
 
   .welcome h1 {
-    font-size: 36px;
 
-    letter-spacing:
-      -1.2px;
+    font-size:
+      36px;
   }
+
 
   .welcome p {
-    font-size: 14px;
+
+    font-size:
+      14px;
   }
 
-  .demo-info {
+
+  .cube {
+
+    width:
+      120px;
+
+    height:
+      120px;
+  }
+
+
+  .face {
+
+    width:
+      120px;
+
+    height:
+      120px;
+  }
+
+
+  .front {
+
+    transform:
+      translateZ(60px);
+  }
+
+
+  .back {
+
+    transform:
+      rotateY(180deg)
+      translateZ(60px);
+  }
+
+
+  .right {
+
+    transform:
+      rotateY(90deg)
+      translateZ(60px);
+  }
+
+
+  .left {
+
+    transform:
+      rotateY(-90deg)
+      translateZ(60px);
+  }
+
+
+  .top {
+
+    transform:
+      rotateX(90deg)
+      translateZ(60px);
+  }
+
+
+  .bottom {
+
+    transform:
+      rotateX(-90deg)
+      translateZ(60px);
+  }
+
+}
+
+
+/* =========================================================
+   VERY SMALL SCREENS
+========================================================= */
+
+@media (max-width: 400px) {
+
+  .demo-controls {
+
     display: none;
   }
 
-  .demo-controls button {
-    font-size: 10px;
-  }
 }
