@@ -50,7 +50,7 @@ function addMessage(role, content = "") {
   }
 
   const wrapper = document.createElement("div");
-  wrapper.className = `message ${role}`;
+  wrapper.className = `message ${role} ${role === "user" ? "reveal-right" : "reveal-left"}`;
 
   const avatar = document.createElement("div");
   avatar.className = "message-avatar";
@@ -64,6 +64,12 @@ function addMessage(role, content = "") {
   wrapper.appendChild(bubble);
 
   messagesContainer.appendChild(wrapper);
+
+  // Trigger reveal animation instantly for messages
+  requestAnimationFrame(() => {
+    wrapper.classList.add("active");
+  });
+
   scrollToBottom();
 
   return bubble;
@@ -386,10 +392,131 @@ if (demoError) {
 }
 
 /* =========================================================
+   CUSTOM SPACE THEME CURSOR & TRAILING STARDUST PARTICLES
+========================================================= */
+(() => {
+  const cursorEl = document.getElementById("space-cursor");
+  const particleCanvas = document.getElementById("cursor-particle-canvas");
+  if (!cursorEl || !particleCanvas) return;
+
+  const ctx = particleCanvas.getContext("2d");
+  let width = (particleCanvas.width = window.innerWidth);
+  let height = (particleCanvas.height = window.innerHeight);
+
+  window.addEventListener("resize", () => {
+    width = particleCanvas.width = window.innerWidth;
+    height = particleCanvas.height = window.innerHeight;
+  });
+
+  const mouse = { x: window.innerWidth / 2, y: window.innerHeight / 2 };
+  const cursorPos = { x: window.innerWidth / 2, y: window.innerHeight / 2 };
+  const particles = [];
+
+  window.addEventListener("pointermove", (e) => {
+    mouse.x = e.clientX;
+    mouse.y = e.clientY;
+
+    // Spawn stardust particle on cursor movement
+    if (Math.random() < 0.65) {
+      particles.push({
+        x: e.clientX,
+        y: e.clientY,
+        vx: (Math.random() - 0.5) * 1.6,
+        vy: (Math.random() - 0.5) * 1.6 - 0.4,
+        size: Math.random() * 2.8 + 1,
+        color: Math.random() > 0.45 ? "#38bdf8" : "#ec4899",
+        alpha: 1,
+        life: Math.random() * 25 + 20
+      });
+    }
+  });
+
+  // Hover detection for cursor scaling
+  const bindHoverEvents = () => {
+    const interactiveElements = document.querySelectorAll(
+      "button, input, textarea, a, .suggestion-chip, .showcase-card"
+    );
+    interactiveElements.forEach((el) => {
+      el.addEventListener("mouseenter", () => cursorEl.classList.add("is-hovering"));
+      el.addEventListener("mouseleave", () => cursorEl.classList.remove("is-hovering"));
+    });
+  };
+
+  bindHoverEvents();
+  const observer = new MutationObserver(bindHoverEvents);
+  observer.observe(document.body, { childList: true, subtree: true });
+
+  // Render loop for space cursor physics & particle trails
+  function renderCursor() {
+    // Smooth lerp for outer ring physics
+    cursorPos.x += (mouse.x - cursorPos.x) * 0.22;
+    cursorPos.y += (mouse.y - cursorPos.y) * 0.22;
+
+    cursorEl.style.transform = `translate3d(${cursorPos.x}px, ${cursorPos.y}px, 0) translate(-50%, -50%)`;
+
+    ctx.clearRect(0, 0, width, height);
+
+    for (let i = particles.length - 1; i >= 0; i--) {
+      const p = particles[i];
+      p.x += p.vx;
+      p.y += p.vy;
+      p.alpha -= 1 / p.life;
+
+      if (p.alpha <= 0) {
+        particles.splice(i, 1);
+        continue;
+      }
+
+      ctx.save();
+      ctx.globalAlpha = p.alpha;
+      ctx.fillStyle = p.color;
+      ctx.shadowBlur = 8;
+      ctx.shadowColor = p.color;
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+    }
+
+    requestAnimationFrame(renderCursor);
+  }
+
+  requestAnimationFrame(renderCursor);
+})();
+
+/* =========================================================
+   SCROLL REVEAL OBSERVER (LEFT & RIGHT TO CENTER)
+========================================================= */
+(() => {
+  const observerOptions = {
+    root: document.getElementById("messages"),
+    threshold: 0.1
+  };
+
+  const revealObserver = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add("active");
+      }
+    });
+  }, observerOptions);
+
+  const initRevealElements = () => {
+    const revealElements = document.querySelectorAll(".reveal-left, .reveal-right");
+    revealElements.forEach((el) => revealObserver.observe(el));
+  };
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", initRevealElements);
+  } else {
+    initRevealElements();
+  }
+})();
+
+/* =========================================================
    INITIALIZATION
 ========================================================= */
 setGenerating(false);
 setButtonState("idle");
 setInputHeight();
 messageInput.focus();
-

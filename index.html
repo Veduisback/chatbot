@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="AI Chat — Next-generation interactive streaming AI assistant with 3D WebGL background" />
+  <meta name="description" content="AI Chat — Next-generation interactive streaming AI assistant with 3D WebGL background and custom GLSL fragment shader" />
   <title>AI Chat — Next-Gen Intelligence</title>
 
   <!-- Google Fonts -->
@@ -14,6 +14,13 @@
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
+
+  <!-- Custom Space Theme Cursor -->
+  <div id="space-cursor" class="space-cursor" aria-hidden="true">
+    <div class="space-cursor-dot"></div>
+    <div class="space-cursor-ring"></div>
+  </div>
+  <canvas id="cursor-particle-canvas" aria-hidden="true"></canvas>
 
   <!-- 3D WebGL Canvas Background -->
   <canvas id="three-bg" aria-hidden="true"></canvas>
@@ -72,6 +79,37 @@
               <span class="chip-text">Draft a professional feedback email</span>
             </button>
           </div>
+
+          <!-- Showcase Grid with Scroll-triggered Left / Right to Center Animations -->
+          <div class="showcase-section">
+            <h2 class="showcase-title reveal-left">Features & Capabilities</h2>
+            <div class="showcase-grid">
+              <div class="showcase-card reveal-left">
+                <div class="card-icon">⚡</div>
+                <h3>Neural Streaming Engine</h3>
+                <p>Real-time low-latency response generation with instant stop & retry controls.</p>
+              </div>
+
+              <div class="showcase-card reveal-right">
+                <div class="card-icon">🌌</div>
+                <h3>Cosmic GLSL Shader</h3>
+                <p>Dynamic fragment shader background with real-time domain warping & space particles.</p>
+              </div>
+
+              <div class="showcase-card reveal-left">
+                <div class="card-icon">🔮</div>
+                <h3>Interactable 3D Orbit</h3>
+                <p>Interactive polyhedral space objects that track mouse cursor tilt and raycast hits.</p>
+              </div>
+
+              <div class="showcase-card reveal-right">
+                <div class="card-icon">🎯</div>
+                <h3>Space Cursor Trajectory</h3>
+                <p>Stardust particle trail physics following your mouse pointer with custom magnetic hover.</p>
+              </div>
+            </div>
+          </div>
+
         </div>
       </section>
 
