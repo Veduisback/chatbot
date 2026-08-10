@@ -1,81 +1,155 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
+<header class="header">
+  <div class="brand">
+    AI Chat
+  </div>
 
-  <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0"
-  />
+  <div id="status" class="status" aria-live="polite">
+    Ready
+  </div>
+</header>
 
-  <title>AI Chat</title>
+<main id="messages">
 
-  <link rel="stylesheet" href="style.css" />
-</head>
+  <section id="welcome" class="welcome">
+    <div class="welcome-inner">
+      <h1>Ask anything.</h1>
 
-<body>
+```
+  <p>
+    A simple AI chatbot with streaming responses,
+    multi-turn conversations, and stoppable generation.
+  </p>
 
-  <div class="app">
+  <!-- Button lifecycle explanation -->
+  <div class="demo-info">
+    <span>Button lifecycle</span>
+    <span>Idle → Loading → Success / Error</span>
+  </div>
+</div>
+```
 
-    <header class="header">
-      <div class="brand">
-        AI Chat
-      </div>
+  </section>
 
-      <div id="status" class="status">
-        Ready
-      </div>
-    </header>
+</main>
 
-    <main id="messages">
+<div class="composer-wrap">
 
-      <section id="welcome" class="welcome">
-        <div class="welcome-inner">
-          <h1>Ask anything.</h1>
+  <form id="chatForm" class="composer">
 
-          <p>
-            A simple AI chatbot with streaming responses,
-            multi-turn conversations, and stoppable generation.
-          </p>
-        </div>
-      </section>
+```
+<textarea
+  id="messageInput"
+  rows="1"
+  placeholder="Message AI..."
+  aria-label="Message"
+  autocomplete="off"
+></textarea>
 
-    </main>
+<!--
+  Main lifecycle button.
 
-    <div class="composer-wrap">
+  The different content elements remain in the DOM so that
+  CSS can transition between them instead of abruptly
+  replacing the button contents.
+-->
+<button
+  id="sendButton"
+  type="submit"
+  aria-label="Send message"
+  aria-live="polite"
+>
 
-      <form id="chatForm" class="composer">
+  <!-- Idle -->
+  <span class="send-content">
+    <span>Send</span>
+  </span>
 
-        <textarea
-          id="messageInput"
-          rows="1"
-          placeholder="Message AI..."
-          aria-label="Message"
-          autocomplete="off"
-        ></textarea>
+  <!-- Loading -->
+  <span
+    class="loading-content"
+    aria-hidden="true"
+  >
+    <span class="spinner"></span>
+    <span>Sending</span>
+  </span>
 
-        <button
-          id="sendButton"
-          type="submit"
-        >
-          Send
-        </button>
+  <!-- Success -->
+  <span
+    class="success-content"
+    aria-hidden="true"
+  >
+    <svg
+      class="success-icon"
+      viewBox="0 0 24 24"
+      fill="none"
+      aria-hidden="true"
+    >
+      <path d="M5 12.5L9.5 17L19 7" />
+    </svg>
 
-        <button
-          id="stopButton"
-          type="button"
-          style="display: none;"
-        >
-          Stop
-        </button>
+    <span>Sent</span>
+  </span>
 
-      </form>
+  <!-- Error -->
+  <span
+    class="error-content"
+    aria-hidden="true"
+  >
+    <svg
+      class="error-icon"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2"
+      aria-hidden="true"
+    >
+      <circle cx="12" cy="12" r="9"></circle>
+      <path d="M12 8v5"></path>
+      <path d="M12 16h.01"></path>
+    </svg>
 
-    </div>
+    <span>Retry</span>
+  </span>
+
+</button>
+
+<!-- Existing stop button -->
+<button
+  id="stopButton"
+  type="button"
+  style="display: none;"
+  aria-label="Stop generation"
+>
+  Stop
+</button>
+```
+
+  </form>
+
+  <!--
+    Demo controls required by the challenge.
+    These trigger the success/error paths without needing
+    a real backend request.
+  -->
+
+  <div class="demo-controls">
+
+```
+<button
+  id="demoSuccess"
+  type="button"
+>
+  Test Success
+</button>
+
+<button
+  id="demoError"
+  type="button"
+>
+  Test Error
+</button>
+```
 
   </div>
 
-  <script src="app.js"></script>
-
-</body>
-</html>
+</div>
