@@ -1,5 +1,4 @@
-const API_URL =
-  "https://chatbot-eqq8.onrender.com";
+const API_URL = "https://chatbot-eqq8.onrender.com";
 
 
 /* =========================================================
@@ -33,6 +32,9 @@ const demoSuccess =
 const demoError =
   document.getElementById("demoError");
 
+const cube =
+  document.getElementById("cube");
+
 
 /* =========================================================
    STATE
@@ -50,16 +52,149 @@ let lastSubmittedText = "";
 
 
 /* =========================================================
-   CHECK ANIME.JS
+   3D OBJECT
 ========================================================= */
 
-if (typeof anime === "undefined") {
+/*
+ * The cube follows the pointer.
+ *
+ * There are no external libraries here.
+ */
 
-  console.error(
-    "Anime.js failed to load."
+let targetX = -20;
+let targetY = 35;
+
+let currentX = targetX;
+let currentY = targetY;
+
+
+function updateCube() {
+
+  currentX +=
+    (targetX - currentX) * 0.08;
+
+  currentY +=
+    (targetY - currentY) * 0.08;
+
+
+  if (cube) {
+
+    cube.style.transform =
+      `translate(-50%, -50%)
+       rotateX(${currentX}deg)
+       rotateY(${currentY}deg)`;
+  }
+
+
+  requestAnimationFrame(
+    updateCube
   );
-
 }
+
+
+window.addEventListener(
+  "pointermove",
+  (event) => {
+
+    const x =
+      event.clientX /
+      window.innerWidth;
+
+    const y =
+      event.clientY /
+      window.innerHeight;
+
+
+    targetY =
+      35 +
+      (x - 0.5) * 45;
+
+
+    targetX =
+      -20 +
+      (y - 0.5) * -35;
+  }
+);
+
+
+updateCube();
+
+
+/* =========================================================
+   TOUCH / DRAG INTERACTION
+========================================================= */
+
+let dragging = false;
+
+let previousPointerX = 0;
+let previousPointerY = 0;
+
+
+window.addEventListener(
+  "pointerdown",
+  (event) => {
+
+    dragging = true;
+
+    previousPointerX =
+      event.clientX;
+
+    previousPointerY =
+      event.clientY;
+  }
+);
+
+
+window.addEventListener(
+  "pointerup",
+  () => {
+
+    dragging = false;
+  }
+);
+
+
+window.addEventListener(
+  "pointercancel",
+  () => {
+
+    dragging = false;
+  }
+);
+
+
+window.addEventListener(
+  "pointermove",
+  (event) => {
+
+    if (!dragging) {
+      return;
+    }
+
+
+    const dx =
+      event.clientX -
+      previousPointerX;
+
+    const dy =
+      event.clientY -
+      previousPointerY;
+
+
+    targetY +=
+      dx * 0.4;
+
+    targetX +=
+      dy * 0.4;
+
+
+    previousPointerX =
+      event.clientX;
+
+    previousPointerY =
+      event.clientY;
+  }
+);
 
 
 /* =========================================================
@@ -72,8 +207,10 @@ function addMessage(
 ) {
 
   if (welcome) {
+
     welcome.remove();
   }
+
 
   const wrapper =
     document.createElement("div");
@@ -81,33 +218,30 @@ function addMessage(
   wrapper.className =
     `message ${role}`;
 
+
   const bubble =
     document.createElement("div");
 
   bubble.className =
     "bubble";
 
+
   bubble.textContent =
     content;
 
-  if (role === "assistant") {
-
-    bubble.setAttribute(
-      "aria-live",
-      "polite"
-    );
-
-  }
 
   wrapper.appendChild(
     bubble
   );
 
+
   messagesContainer.appendChild(
     wrapper
   );
 
+
   scrollToBottom();
+
 
   return bubble;
 }
@@ -125,116 +259,34 @@ function scrollToBottom() {
 
 
 /* =========================================================
-   BUTTON CONTENT
+   BUTTON STATES
 ========================================================= */
 
-const buttonContents = {
-
-  idle:
-    sendButton.querySelector(
-      ".send-content"
-    ),
-
-  loading:
-    sendButton.querySelector(
-      ".loading-content"
-    ),
-
-  success:
-    sendButton.querySelector(
-      ".success-content"
-    ),
-
-  error:
-    sendButton.querySelector(
-      ".error-content"
-    )
-
-};
-
-
-/* =========================================================
-   ANIME HELPER
-========================================================= */
-
-function animate(targets, properties) {
-
-  if (
-    typeof anime === "undefined"
-  ) {
-    return;
-  }
-
-  anime.remove(targets);
-
-  return anime({
-    targets,
-    ...properties
-  });
-}
-
-
-/* =========================================================
-   BUTTON STATE
-========================================================= */
-
-function setButtonState(
-  state
-) {
-
-  clearTimeout(
-    lifecycleTimer
-  );
+function clearLifecycleStates() {
 
   sendButton.classList.remove(
     "is-loading",
     "is-success",
-    "is-error"
+    "is-error",
+    "shake"
   );
 
 
-  /* ---------------------------------------------
-     Reset content
-  --------------------------------------------- */
+  if (lifecycleTimer) {
 
-  Object.values(
-    buttonContents
-  ).forEach(
-    (element) => {
+    clearTimeout(
+      lifecycleTimer
+    );
 
-      element.style.opacity =
-        "0";
-
-      element.style.transform =
-        "translateY(10px) scale(0.92)";
-
-      element.setAttribute(
-        "aria-hidden",
-        "true"
-      );
-
-    }
-  );
-
-
-  const active =
-    buttonContents[state];
-
-
-  if (!active) {
-    return;
+    lifecycleTimer = null;
   }
+}
 
 
-  active.setAttribute(
-    "aria-hidden",
-    "false"
-  );
+function setButtonState(state) {
 
+  clearLifecycleStates();
 
-  /* ---------------------------------------------
-     State classes
-  --------------------------------------------- */
 
   if (state === "loading") {
 
@@ -242,14 +294,14 @@ function setButtonState(
       "is-loading"
     );
 
-    sendButton.disabled =
-      true;
+    sendButton.disabled = true;
 
     sendButton.setAttribute(
       "aria-label",
       "Sending message"
     );
 
+    return;
   }
 
 
@@ -259,168 +311,54 @@ function setButtonState(
       "is-success"
     );
 
-    sendButton.disabled =
-      true;
+    sendButton.disabled = true;
 
     sendButton.setAttribute(
       "aria-label",
       "Message sent"
     );
 
+    return;
   }
 
 
   if (state === "error") {
 
     sendButton.classList.add(
-      "is-error"
+      "is-error",
+      "shake"
     );
 
-    sendButton.disabled =
-      false;
+    sendButton.disabled = false;
 
     sendButton.setAttribute(
       "aria-label",
       "Retry sending message"
     );
 
-  }
 
+    setTimeout(
+      () => {
 
-  if (state === "idle") {
+        sendButton.classList.remove(
+          "shake"
+        );
 
-    sendButton.disabled =
-      false;
-
-    sendButton.setAttribute(
-      "aria-label",
-      "Send message"
+      },
+      380
     );
 
-  }
-
-
-  /* ---------------------------------------------
-     Animate active state
-  --------------------------------------------- */
-
-  const reducedMotion =
-    window.matchMedia(
-      "(prefers-reduced-motion: reduce)"
-    ).matches;
-
-
-  if (reducedMotion) {
-
-    active.style.opacity =
-      "1";
-
-    active.style.transform =
-      "translateY(0) scale(1)";
 
     return;
   }
 
 
-  animate(
-    active,
-    {
-      opacity: [0, 1],
+  sendButton.disabled = false;
 
-      translateY: [
-        10,
-        0
-      ],
-
-      scale: [
-        0.92,
-        1
-      ],
-
-      duration: 320,
-
-      easing:
-        "easeOutCubic"
-    }
+  sendButton.setAttribute(
+    "aria-label",
+    "Send message"
   );
-
-
-  /* ---------------------------------------------
-     Success icon animation
-  --------------------------------------------- */
-
-  if (
-    state === "success"
-  ) {
-
-    const icon =
-      active.querySelector(
-        ".success-icon"
-      );
-
-    if (icon) {
-
-      animate(
-        icon,
-        {
-          scale: [
-            0.4,
-            1.2,
-            1
-          ],
-
-          rotate: [
-            -12,
-            4,
-            0
-          ],
-
-          opacity: [
-            0,
-            1
-          ],
-
-          duration: 500,
-
-          easing:
-            "easeOutElastic(1, .6)"
-        }
-      );
-
-    }
-
-  }
-
-
-  /* ---------------------------------------------
-     Error shake
-  --------------------------------------------- */
-
-  if (
-    state === "error"
-  ) {
-
-    animate(
-      sendButton,
-      {
-        translateX: [
-          0,
-          -6,
-          6,
-          -4,
-          4,
-          0
-        ],
-
-        duration: 380,
-
-        easing:
-          "easeInOutSine"
-      }
-    );
-
-  }
-
 }
 
 
@@ -428,15 +366,15 @@ function setButtonState(
    GENERATION STATE
 ========================================================= */
 
-function setGenerating(
-  value
-) {
+function setGenerating(value) {
 
   isGenerating =
     value;
 
+
   messageInput.disabled =
     value;
+
 
   stopButton.hidden =
     !value;
@@ -448,6 +386,7 @@ function setGenerating(
       "loading"
     );
 
+
     statusElement.textContent =
       "Generating...";
 
@@ -455,9 +394,7 @@ function setGenerating(
 
     statusElement.textContent =
       "Ready";
-
   }
-
 }
 
 
@@ -471,6 +408,7 @@ function showSuccess() {
     "success"
   );
 
+
   statusElement.textContent =
     "Sent";
 
@@ -483,15 +421,16 @@ function showSuccess() {
           "idle"
         );
 
+
         statusElement.textContent =
           "Ready";
+
 
         messageInput.focus();
 
       },
-      1200
+      1100
     );
-
 }
 
 
@@ -505,20 +444,21 @@ function showError() {
     "error"
   );
 
+
   statusElement.textContent =
     "Failed — retry";
-
 }
 
 
 /* =========================================================
-   INPUT HEIGHT
+   TEXTAREA
 ========================================================= */
 
 function setInputHeight() {
 
   messageInput.style.height =
     "auto";
+
 
   messageInput.style.height =
     Math.min(
@@ -527,10 +467,6 @@ function setInputHeight() {
     ) + "px";
 }
 
-
-/* =========================================================
-   INPUT
-========================================================= */
 
 messageInput.addEventListener(
   "input",
@@ -553,20 +489,18 @@ messageInput.addEventListener(
 
       event.preventDefault();
 
+
       if (!isGenerating) {
 
         chatForm.requestSubmit();
-
       }
-
     }
-
   }
 );
 
 
 /* =========================================================
-   SEND MESSAGE
+   SEND
 ========================================================= */
 
 chatForm.addEventListener(
@@ -585,7 +519,9 @@ chatForm.addEventListener(
       messageInput.value.trim();
 
 
-    /* Retry */
+    /*
+     * Retry previous failed message.
+     */
 
     if (
       sendButton.classList.contains(
@@ -596,13 +532,15 @@ chatForm.addEventListener(
       text =
         lastSubmittedText ||
         text;
-
     }
 
 
     if (!text) {
       return;
     }
+
+
+    clearLifecycleStates();
 
 
     lastSubmittedText =
@@ -682,25 +620,25 @@ chatForm.addEventListener(
         let errorMessage =
           "Something went wrong.";
 
+
         try {
 
           const errorData =
             await response.json();
+
 
           errorMessage =
             errorData.error ||
             errorMessage;
 
         } catch {
-
-          /* Ignore */
-
+          // Ignore invalid JSON
         }
+
 
         throw new Error(
           errorMessage
         );
-
       }
 
 
@@ -709,18 +647,18 @@ chatForm.addEventListener(
         throw new Error(
           "Streaming is not supported."
         );
-
       }
 
 
       const reader =
         response.body.getReader();
 
+
       const decoder =
         new TextDecoder();
 
-      let buffer =
-        "";
+
+      let buffer = "";
 
 
       while (true) {
@@ -814,7 +752,6 @@ chatForm.addEventListener(
                   parsed.error ||
                   "Generation failed."
                 );
-
               }
 
 
@@ -825,39 +762,32 @@ chatForm.addEventListener(
                 assistantText +=
                   parsed.content;
 
+
                 assistantBubble.textContent =
                   assistantText;
 
-                scrollToBottom();
 
+                scrollToBottom();
               }
 
-            } catch (
-              parseError
-            ) {
+            } catch (error) {
 
               /*
-               * Ignore malformed
-               * JSON chunks.
+               * Re-throw actual server errors.
                */
 
               if (
-                parseError.message &&
-                !parseError.message.includes(
+                error.message &&
+                !error.message.includes(
                   "Unexpected token"
                 )
               ) {
 
-                throw parseError;
-
+                throw error;
               }
-
             }
-
           }
-
         }
-
       }
 
 
@@ -875,14 +805,7 @@ chatForm.addEventListener(
 
       showSuccess();
 
-    }
-
-
-    catch (error) {
-
-      /* -----------------------------------------
-         User stopped generation
-      ----------------------------------------- */
+    } catch (error) {
 
       if (
         error.name ===
@@ -900,7 +823,6 @@ chatForm.addEventListener(
 
           assistantBubble.textContent =
             "Generation stopped.";
-
         }
 
 
@@ -909,51 +831,45 @@ chatForm.addEventListener(
         );
 
 
-        setButtonState(
-          "idle"
-        );
+        clearLifecycleStates();
+
 
         statusElement.textContent =
           "Stopped";
 
-      }
-
-
-      /* -----------------------------------------
-         Normal error
-      ----------------------------------------- */
-
-      else {
+      } else {
 
         assistantBubble.classList.add(
           "error"
         );
 
+
         assistantBubble.textContent =
           error.message ||
           "Failed to generate a response.";
+
 
         assistantBubble.classList.remove(
           "streaming"
         );
 
-        showError();
 
+        showError();
       }
 
-    }
-
-
-    finally {
+    } finally {
 
       controller =
         null;
 
+
       isGenerating =
         false;
 
+
       messageInput.disabled =
         false;
+
 
       stopButton.hidden =
         true;
@@ -971,11 +887,10 @@ chatForm.addEventListener(
         setButtonState(
           "idle"
         );
-
       }
 
-      messageInput.focus();
 
+      messageInput.focus();
     }
 
   }
@@ -983,7 +898,7 @@ chatForm.addEventListener(
 
 
 /* =========================================================
-   STOP BUTTON
+   STOP
 ========================================================= */
 
 stopButton.addEventListener(
@@ -993,9 +908,7 @@ stopButton.addEventListener(
     if (controller) {
 
       controller.abort();
-
     }
-
   }
 );
 
@@ -1023,8 +936,9 @@ demoSuccess.addEventListener(
 
 
     const delay =
-      700 +
-      Math.random() * 900;
+      900 +
+      Math.random() *
+      900;
 
 
     await new Promise(
@@ -1042,7 +956,6 @@ demoSuccess.addEventListener(
 
 
     showSuccess();
-
   }
 );
 
@@ -1071,7 +984,8 @@ demoError.addEventListener(
 
     const delay =
       700 +
-      Math.random() * 700;
+      Math.random() *
+      800;
 
 
     await new Promise(
@@ -1089,14 +1003,17 @@ demoError.addEventListener(
 
 
     showError();
-
   }
 );
 
 
 /* =========================================================
-   INITIAL STATE
+   INITIALIZE
 ========================================================= */
+
+setGenerating(
+  false
+);
 
 setButtonState(
   "idle"
