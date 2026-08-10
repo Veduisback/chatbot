@@ -1,29 +1,39 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-
+  <meta charset="UTF-8" />
   <meta
     name="viewport"
     content="width=device-width, initial-scale=1.0"
-  >
-
-  <meta
-    name="description"
-    content="AI Chat with an animated message button lifecycle"
-  >
+  />
 
   <title>AI Chat</title>
 
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css" />
 </head>
 
 <body>
 
+  <!-- =====================================================
+       3D BACKGROUND
+       ===================================================== -->
+
+  <canvas
+    id="three-bg"
+    aria-hidden="true"
+  ></canvas>
+
+
+  <!-- =====================================================
+       APPLICATION
+       ===================================================== -->
+
   <div class="app">
 
     <!-- Header -->
+
     <header class="header">
+
       <div class="brand">
         AI Chat
       </div>
@@ -35,10 +45,12 @@
       >
         Ready
       </div>
+
     </header>
 
 
     <!-- Messages -->
+
     <main
       id="messages"
       aria-live="polite"
@@ -62,11 +74,11 @@
           <div class="demo-info">
 
             <span>
-              Button lifecycle
+              Interactive AI chat
             </span>
 
             <span>
-              Idle → Loading → Success / Error
+              Streaming · Multi-turn · Stoppable
             </span>
 
           </div>
@@ -78,7 +90,10 @@
     </main>
 
 
-    <!-- Composer -->
+    <!-- =================================================
+         COMPOSER
+         ================================================= -->
+
     <div class="composer-wrap">
 
       <form
@@ -95,41 +110,42 @@
         ></textarea>
 
 
-        <!-- Animated Send Button -->
+        <!-- SEND BUTTON -->
+
         <button
           id="sendButton"
           type="submit"
           aria-label="Send message"
+          aria-live="polite"
         >
 
           <!-- Idle -->
-          <span
-            class="button-state send-content"
-            aria-hidden="false"
-          >
+
+          <span class="send-content">
             <span>Send</span>
           </span>
 
 
           <!-- Loading -->
+
           <span
-            class="button-state loading-content"
+            class="loading-content"
             aria-hidden="true"
           >
 
-            <span
-              class="spinner"
-              aria-hidden="true"
-            ></span>
+            <span class="spinner"></span>
 
-            <span>Sending</span>
+            <span>
+              Sending
+            </span>
 
           </span>
 
 
           <!-- Success -->
+
           <span
-            class="button-state success-content"
+            class="success-content"
             aria-hidden="true"
           >
 
@@ -137,19 +153,21 @@
               class="success-icon"
               viewBox="0 0 24 24"
               fill="none"
-              aria-hidden="true"
             >
-              <path d="M5 12.5L9.5 17L19 7"></path>
+              <path d="M5 12.5L9.5 17L19 7" />
             </svg>
 
-            <span>Sent</span>
+            <span>
+              Sent
+            </span>
 
           </span>
 
 
           <!-- Error -->
+
           <span
-            class="button-state error-content"
+            class="error-content"
             aria-hidden="true"
           >
 
@@ -157,31 +175,40 @@
               class="error-icon"
               viewBox="0 0 24 24"
               fill="none"
-              aria-hidden="true"
+              stroke="currentColor"
+              stroke-width="2"
             >
+
               <circle
                 cx="12"
                 cy="12"
                 r="9"
               ></circle>
 
-              <path d="M12 8v5"></path>
+              <path
+                d="M12 8v5"
+              ></path>
 
-              <path d="M12 16h.01"></path>
+              <path
+                d="M12 16h.01"
+              ></path>
+
             </svg>
 
-            <span>Retry</span>
+            <span>
+              Retry
+            </span>
 
           </span>
 
         </button>
 
 
-        <!-- Stop generation -->
+        <!-- STOP -->
+
         <button
           id="stopButton"
           type="button"
-          class="stop-button"
           hidden
           aria-label="Stop generation"
         >
@@ -192,10 +219,8 @@
 
 
       <!-- Demo controls -->
-      <div
-        class="demo-controls"
-        aria-label="Animation demonstrations"
-      >
+
+      <div class="demo-controls">
 
         <button
           id="demoSuccess"
@@ -218,17 +243,18 @@
   </div>
 
 
-  <!--
-    Anime.js
-    Using the stable 3.x browser build so it can be
-    loaded directly without a bundler.
-  -->
-  <script
-    src="https://cdn.jsdelivr.net/npm/animejs@3.2.2/lib/anime.min.js"
-  ></script>
+  <!-- =====================================================
+       THREE.JS
+       ===================================================== -->
 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 
-  <!-- Your application -->
+  <!-- 3D background -->
+
+  <script src="three-background.js"></script>
+
+  <!-- Existing chatbot logic -->
+
   <script src="app.js"></script>
 
 </body>
