@@ -1,40 +1,56 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+  <meta
+    name="description"
+    content="AI Chat with an animated message button lifecycle"
+  >
 
   <title>AI Chat</title>
 
   <link rel="stylesheet" href="style.css">
-
-  <!-- Anime.js -->
-  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.2/lib/anime.min.js"></script>
 </head>
 
 <body>
 
   <div class="app">
 
+    <!-- Header -->
     <header class="header">
-      <div class="brand">AI Chat</div>
+      <div class="brand">
+        AI Chat
+      </div>
 
-      <div id="status" class="status">
+      <div
+        id="status"
+        class="status"
+        aria-live="polite"
+      >
         Ready
       </div>
     </header>
 
-    <main id="messages">
 
-      <section id="welcome" class="welcome">
+    <!-- Messages -->
+    <main
+      id="messages"
+      aria-live="polite"
+      aria-label="Chat messages"
+    >
+
+      <section
+        id="welcome"
+        class="welcome"
+      >
+
         <div class="welcome-inner">
-
-          <div class="logo-animation">
-            <span class="logo-dot"></span>
-            <span class="logo-dot"></span>
-            <span class="logo-dot"></span>
-          </div>
 
           <h1>Ask anything.</h1>
 
@@ -44,18 +60,31 @@
           </p>
 
           <div class="demo-info">
-            <span>Button lifecycle</span>
-            <span>Idle → Loading → Success / Error</span>
+
+            <span>
+              Button lifecycle
+            </span>
+
+            <span>
+              Idle → Loading → Success / Error
+            </span>
+
           </div>
 
         </div>
+
       </section>
 
     </main>
 
+
+    <!-- Composer -->
     <div class="composer-wrap">
 
-      <form id="chatForm" class="composer">
+      <form
+        id="chatForm"
+        class="composer"
+      >
 
         <textarea
           id="messageInput"
@@ -65,29 +94,45 @@
           autocomplete="off"
         ></textarea>
 
+
+        <!-- Animated Send Button -->
         <button
           id="sendButton"
           type="submit"
           aria-label="Send message"
-          aria-live="polite"
         >
 
-          <span class="send-content">
+          <!-- Idle -->
+          <span
+            class="button-state send-content"
+            aria-hidden="false"
+          >
             <span>Send</span>
           </span>
 
+
+          <!-- Loading -->
           <span
-            class="loading-content"
+            class="button-state loading-content"
             aria-hidden="true"
           >
-            <span class="spinner"></span>
+
+            <span
+              class="spinner"
+              aria-hidden="true"
+            ></span>
+
             <span>Sending</span>
+
           </span>
 
+
+          <!-- Success -->
           <span
-            class="success-content"
+            class="button-state success-content"
             aria-hidden="true"
           >
+
             <svg
               class="success-icon"
               viewBox="0 0 24 24"
@@ -98,33 +143,45 @@
             </svg>
 
             <span>Sent</span>
+
           </span>
 
+
+          <!-- Error -->
           <span
-            class="error-content"
+            class="button-state error-content"
             aria-hidden="true"
           >
+
             <svg
               class="error-icon"
               viewBox="0 0 24 24"
               fill="none"
-              stroke="currentColor"
-              stroke-width="2"
               aria-hidden="true"
             >
-              <circle cx="12" cy="12" r="9"></circle>
+              <circle
+                cx="12"
+                cy="12"
+                r="9"
+              ></circle>
+
               <path d="M12 8v5"></path>
+
               <path d="M12 16h.01"></path>
             </svg>
 
             <span>Retry</span>
+
           </span>
 
         </button>
 
+
+        <!-- Stop generation -->
         <button
           id="stopButton"
           type="button"
+          class="stop-button"
           hidden
           aria-label="Stop generation"
         >
@@ -133,7 +190,12 @@
 
       </form>
 
-      <div class="demo-controls">
+
+      <!-- Demo controls -->
+      <div
+        class="demo-controls"
+        aria-label="Animation demonstrations"
+      >
 
         <button
           id="demoSuccess"
@@ -155,7 +217,18 @@
 
   </div>
 
-  <!-- Your chatbot JavaScript -->
+
+  <!--
+    Anime.js
+    Using the stable 3.x browser build so it can be
+    loaded directly without a bundler.
+  -->
+  <script
+    src="https://cdn.jsdelivr.net/npm/animejs@3.2.2/lib/anime.min.js"
+  ></script>
+
+
+  <!-- Your application -->
   <script src="app.js"></script>
 
 </body>
