@@ -1,751 +1,764 @@
 * {
   box-sizing: border-box;
-  }
+}
 
 html,
 body {
-margin: 0;
-padding: 0;
-width: 100%;
-height: 100%;
+  margin: 0;
+  padding: 0;
 
-font-family:
-Inter,
-system-ui,
--apple-system,
-BlinkMacSystemFont,
-"Segoe UI",
-sans-serif;
+  width: 100%;
+  height: 100%;
 
-background: #ffffff;
-color: #171717;
+  font-family:
+    Inter,
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    sans-serif;
+
+  background: #ffffff;
+  color: #171717;
 }
 
 body {
-overflow: hidden;
+  overflow: hidden;
 }
 
 button,
 textarea {
-font: inherit;
+  font: inherit;
 }
 
 button {
--webkit-tap-highlight-color: transparent;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .app {
-height: 100vh;
-display: flex;
-flex-direction: column;
+  height: 100vh;
+
+  display: flex;
+  flex-direction: column;
 }
 
+
 /* =========================================================
-HEADER
-========================================================= */
+   HEADER
+   ========================================================= */
 
 .header {
-height: 60px;
-flex-shrink: 0;
+  height: 60px;
+  flex-shrink: 0;
 
-display: flex;
-align-items: center;
-justify-content: space-between;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 
-padding: 0 24px;
+  padding: 0 24px;
 
-border-bottom: 1px solid #e5e5e5;
-background: #ffffff;
+  border-bottom: 1px solid #e5e5e5;
+
+  background: #ffffff;
 }
 
 .brand {
-font-size: 17px;
-font-weight: 650;
+  font-size: 17px;
+  font-weight: 650;
 }
 
 .status {
-font-size: 13px;
-color: #737373;
+  font-size: 13px;
+  color: #737373;
 }
 
+
 /* =========================================================
-MESSAGES
-========================================================= */
+   MESSAGES
+   ========================================================= */
 
 #messages {
-flex: 1;
+  flex: 1;
 
-overflow-y: auto;
+  overflow-y: auto;
 
-padding: 32px 20px 140px;
+  padding: 32px 20px 150px;
 
-scroll-behavior: smooth;
+  scroll-behavior: smooth;
 }
 
 .welcome {
-min-height: 60%;
+  min-height: 60%;
 
-display: flex;
-align-items: center;
-justify-content: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 
-text-align: center;
+  text-align: center;
 }
 
 .welcome-inner {
-width: 100%;
-max-width: 600px;
+  width: 100%;
+  max-width: 600px;
 }
 
 .welcome h1 {
-margin: 0 0 12px;
+  margin: 0 0 12px;
 
-font-size: clamp(32px, 6vw, 52px);
-letter-spacing: -1.5px;
+  font-size: clamp(32px, 6vw, 52px);
+
+  letter-spacing: -1.5px;
 }
 
 .welcome p {
-margin: 0;
+  margin: 0;
 
-line-height: 1.6;
+  line-height: 1.6;
 
-color: #737373;
-font-size: 15px;
+  color: #737373;
+
+  font-size: 15px;
 }
 
+
 /* =========================================================
-BUTTON LIFECYCLE DESCRIPTION
-========================================================= */
+   LIFECYCLE DESCRIPTION
+   ========================================================= */
 
 .demo-info {
-margin-top: 28px;
+  margin-top: 26px;
 
-display: flex;
-flex-direction: column;
-gap: 6px;
+  display: flex;
+  flex-direction: column;
 
-font-size: 12px;
-color: #a3a3a3;
+  gap: 6px;
+
+  font-size: 12px;
+
+  color: #a3a3a3;
 }
 
 .demo-info span:first-child {
-color: #525252;
-font-weight: 600;
+  color: #525252;
+  font-weight: 600;
 }
 
+
 /* =========================================================
-CHAT MESSAGES
-========================================================= */
+   CHAT MESSAGES
+   ========================================================= */
 
 .message {
-width: 100%;
-max-width: 800px;
+  width: 100%;
+  max-width: 800px;
 
-margin: 0 auto 20px;
+  margin: 0 auto 20px;
 
-display: flex;
+  display: flex;
 }
 
 .message.user {
-justify-content: flex-end;
+  justify-content: flex-end;
 }
 
 .message.assistant {
-justify-content: flex-start;
+  justify-content: flex-start;
 }
 
 .bubble {
-max-width: min(75%, 650px);
+  max-width: min(75%, 650px);
 
-padding: 12px 16px;
+  padding: 12px 16px;
 
-border-radius: 16px;
+  border-radius: 16px;
 
-line-height: 1.55;
+  line-height: 1.55;
 
-white-space: pre-wrap;
-overflow-wrap: anywhere;
+  white-space: pre-wrap;
+
+  overflow-wrap: anywhere;
 }
 
 .message.user .bubble {
-background: #171717;
-color: #ffffff;
+  background: #171717;
+  color: #ffffff;
 
-border-bottom-right-radius: 5px;
+  border-bottom-right-radius: 5px;
 }
 
 .message.assistant .bubble {
-background: #f3f3f3;
-color: #171717;
+  background: #f3f3f3;
+  color: #171717;
 
-border-bottom-left-radius: 5px;
+  border-bottom-left-radius: 5px;
 }
 
 .message.assistant .bubble:empty::after {
-content: "▌";
+  content: "▌";
 
-animation: blink 0.8s infinite;
+  animation: blink 0.8s infinite;
 }
 
 .message.assistant .bubble.error {
-color: #b42318;
-background: #fff1f0;
+  color: #b42318;
+
+  background: #fff1f0;
 }
 
 @keyframes blink {
-50% {
-opacity: 0;
+  50% {
+    opacity: 0;
+  }
 }
-}
+
 
 /* =========================================================
-COMPOSER
-========================================================= */
+   COMPOSER
+   ========================================================= */
 
 .composer-wrap {
-position: fixed;
+  position: fixed;
 
-left: 0;
-right: 0;
-bottom: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
 
-padding: 16px 20px 20px;
+  padding: 16px 20px 20px;
 
-background:
-linear-gradient(
-to top,
-#ffffff 70%,
-rgba(255, 255, 255, 0)
-);
+  background:
+    linear-gradient(
+      to top,
+      #ffffff 70%,
+      rgba(255, 255, 255, 0)
+    );
 }
 
 .composer {
-width: 100%;
-max-width: 800px;
+  width: 100%;
+  max-width: 800px;
 
-margin: 0 auto;
+  margin: 0 auto;
 
-display: flex;
-align-items: flex-end;
+  display: flex;
+  align-items: flex-end;
 
-gap: 8px;
+  gap: 8px;
 
-padding: 8px;
+  padding: 8px;
 
-border: 1px solid #d4d4d4;
-border-radius: 18px;
+  border: 1px solid #d4d4d4;
 
-background: #ffffff;
+  border-radius: 18px;
 
-box-shadow:
-0 4px 20px rgba(0, 0, 0, 0.06);
+  background: #ffffff;
+
+  box-shadow:
+    0 4px 20px rgba(0, 0, 0, 0.06);
 }
 
+
 /* =========================================================
-MESSAGE INPUT
-========================================================= */
+   INPUT
+   ========================================================= */
 
 #messageInput {
-flex: 1;
+  flex: 1;
 
-min-height: 42px;
-max-height: 180px;
+  min-height: 42px;
+  max-height: 180px;
 
-resize: none;
+  resize: none;
 
-border: none;
-outline: none;
+  border: none;
+  outline: none;
 
-padding: 11px 10px;
+  padding: 11px 10px;
 
-line-height: 20px;
+  line-height: 20px;
 
-background: transparent;
-color: #171717;
+  background: transparent;
+
+  color: #171717;
 }
 
 #messageInput::placeholder {
-color: #a3a3a3;
+  color: #a3a3a3;
 }
 
 #messageInput:disabled {
-opacity: 0.6;
+  opacity: 0.6;
 }
 
+
 /* =========================================================
-SEND BUTTON — BASE
-========================================================= */
+   BUTTON BASE
+   ========================================================= */
 
 #sendButton,
 #stopButton {
-position: relative;
+  position: relative;
 
-min-width: 64px;
-height: 40px;
+  min-width: 64px;
+  height: 40px;
 
-padding: 0 16px;
+  padding: 0 16px;
 
-border: none;
-border-radius: 12px;
+  border: none;
 
-cursor: pointer;
+  border-radius: 12px;
 
-font-size: 14px;
-font-weight: 600;
+  cursor: pointer;
 
-display: inline-flex;
-align-items: center;
-justify-content: center;
+  font-size: 14px;
 
-gap: 8px;
+  font-weight: 600;
 
-overflow: hidden;
+  display: inline-flex;
 
-transition:
-transform 180ms cubic-bezier(0.2, 0.8, 0.2, 1),
-opacity 180ms ease,
-background-color 220ms ease,
-box-shadow 220ms ease,
-color 220ms ease,
-min-width 220ms cubic-bezier(0.2, 0.8, 0.2, 1);
+  align-items: center;
+  justify-content: center;
+
+  gap: 8px;
+
+  overflow: hidden;
+
+  transition:
+    transform 180ms cubic-bezier(0.2, 0.8, 0.2, 1),
+    opacity 180ms ease,
+    background-color 220ms ease,
+    box-shadow 220ms ease,
+    color 220ms ease,
+    min-width 220ms cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
 #sendButton {
-background: #171717;
-color: #ffffff;
+  background: #171717;
+  color: #ffffff;
 }
 
+
 /* =========================================================
-SEND BUTTON — HOVER
-========================================================= */
+   HOVER
+   ========================================================= */
 
-#sendButton:hover:not(:disabled) {
-transform: translateY(-1px);
+#sendButton:hover:not(:disabled):not(.is-success) {
+  transform: translateY(-1px);
 
-box-shadow:
-0 5px 14px rgba(0, 0, 0, 0.14);
+  box-shadow:
+    0 5px 14px rgba(0, 0, 0, 0.14);
 }
 
-/* =========================================================
-SEND BUTTON — KEYBOARD FOCUS
-========================================================= */
 
-#sendButton:focus-visible {
-outline: 3px solid rgba(23, 23, 23, 0.22);
-outline-offset: 3px;
+/* =========================================================
+   FOCUS
+   ========================================================= */
+
+#sendButton:focus-visible,
+#stopButton:focus-visible,
+.demo-controls button:focus-visible {
+  outline: 3px solid rgba(23, 23, 23, 0.22);
+
+  outline-offset: 3px;
 }
 
+
 /* =========================================================
-SEND BUTTON — ACTIVE
-========================================================= */
+   ACTIVE
+   ========================================================= */
 
 #sendButton:active:not(:disabled) {
-transform: translateY(1px) scale(0.97);
+  transform:
+    translateY(1px)
+    scale(0.97);
 
-transition-duration: 80ms;
+  transition-duration: 80ms;
 }
 
-/* =========================================================
-SEND BUTTON — DISABLED
-========================================================= */
-
-#sendButton:disabled {
-cursor: not-allowed;
-}
 
 /* =========================================================
-BUTTON CONTENT
-========================================================= */
+   BUTTON CONTENT
+   ========================================================= */
 
 .send-content,
 .loading-content,
 .success-content,
 .error-content {
-display: inline-flex;
+  display: inline-flex;
 
-align-items: center;
-justify-content: center;
+  align-items: center;
+  justify-content: center;
 
-gap: 7px;
+  gap: 7px;
 
-transition:
-opacity 180ms ease,
-transform 220ms cubic-bezier(0.2, 0.8, 0.2, 1);
+  transition:
+    opacity 180ms ease,
+    transform 220ms cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
-/* Non-active content */
+
+/* Non-active states */
 
 .loading-content,
 .success-content,
 .error-content {
-position: absolute;
+  position: absolute;
 
-opacity: 0;
+  opacity: 0;
 
-pointer-events: none;
+  pointer-events: none;
 
-transform:
-translateY(8px)
-scale(0.96);
+  transform:
+    translateY(8px)
+    scale(0.96);
 }
 
+
 /* =========================================================
-LOADING STATE
-========================================================= */
+   LOADING
+   ========================================================= */
 
 #sendButton.is-loading {
-cursor: wait;
+  cursor: wait;
 
-background: #262626;
+  background: #262626;
 
-min-width: 110px;
+  min-width: 110px;
 }
 
 #sendButton.is-loading .send-content {
-opacity: 0;
+  opacity: 0;
 
-transform:
-translateY(-8px)
-scale(0.96);
+  transform:
+    translateY(-8px)
+    scale(0.96);
 }
 
 #sendButton.is-loading .loading-content {
-opacity: 1;
+  opacity: 1;
 
-transform:
-translateY(0)
-scale(1);
+  transform:
+    translateY(0)
+    scale(1);
 }
 
-/* Spinner */
-
 .spinner {
-width: 15px;
-height: 15px;
+  width: 15px;
+  height: 15px;
 
-border: 2px solid rgba(255, 255, 255, 0.3);
+  border: 2px solid rgba(255, 255, 255, 0.3);
 
-border-top-color: #ffffff;
+  border-top-color: #ffffff;
 
-border-radius: 50%;
+  border-radius: 50%;
 
-animation:
-spinnerRotate 700ms linear infinite;
+  animation:
+    spinnerRotate 700ms linear infinite;
 }
 
 @keyframes spinnerRotate {
-to {
-transform: rotate(360deg);
+  to {
+    transform: rotate(360deg);
+  }
 }
-}
+
 
 /* =========================================================
-SUCCESS STATE
-========================================================= */
+   SUCCESS
+   ========================================================= */
 
 #sendButton.is-success {
-background: #16803c;
+  background: #16803c;
 
-min-width: 110px;
+  min-width: 110px;
 
-cursor: default;
+  cursor: default;
 }
 
 #sendButton.is-success .send-content,
 #sendButton.is-success .loading-content,
 #sendButton.is-success .error-content {
-opacity: 0;
+  opacity: 0;
 
-transform: scale(0.9);
+  transform: scale(0.9);
 }
 
 #sendButton.is-success .success-content {
-opacity: 1;
+  opacity: 1;
 
-transform:
-translateY(0)
-scale(1);
+  transform:
+    translateY(0)
+    scale(1);
 }
 
-/* Success icon */
-
 .success-icon {
-width: 16px;
-height: 16px;
+  width: 16px;
+  height: 16px;
 
-display: block;
+  display: block;
 
-stroke: currentColor;
+  stroke: currentColor;
 
-stroke-width: 2.5;
+  stroke-width: 2.5;
 
-stroke-linecap: round;
-stroke-linejoin: round;
+  stroke-linecap: round;
+  stroke-linejoin: round;
 
-animation:
-successPop 300ms cubic-bezier(0.2, 0.8, 0.2, 1);
+  animation:
+    successPop 300ms cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
 @keyframes successPop {
-0% {
-opacity: 0;
+  0% {
+    opacity: 0;
 
-```
-transform: scale(0.5);
-```
+    transform: scale(0.5);
+  }
 
+  70% {
+    transform: scale(1.15);
+  }
+
+  100% {
+    opacity: 1;
+
+    transform: scale(1);
+  }
 }
 
-70% {
-transform: scale(1.15);
-}
-
-100% {
-opacity: 1;
-
-```
-transform: scale(1);
-```
-
-}
-}
 
 /* =========================================================
-ERROR STATE
-========================================================= */
+   ERROR
+   ========================================================= */
 
 #sendButton.is-error {
-background: #c62828;
+  background: #c62828;
 
-min-width: 110px;
+  min-width: 110px;
 }
 
 #sendButton.is-error .send-content,
 #sendButton.is-error .loading-content,
 #sendButton.is-error .success-content {
-opacity: 0;
+  opacity: 0;
 
-transform: scale(0.9);
+  transform: scale(0.9);
 }
 
 #sendButton.is-error .error-content {
-opacity: 1;
+  opacity: 1;
 
-transform:
-translateY(0)
-scale(1);
+  transform:
+    translateY(0)
+    scale(1);
 }
+
+.error-icon {
+  width: 16px;
+  height: 16px;
+
+  display: block;
+}
+
 
 /* Error shake */
 
 #sendButton.shake {
-animation:
-buttonShake 360ms ease-in-out;
+  animation:
+    buttonShake 360ms ease-in-out;
 }
 
 @keyframes buttonShake {
-0%,
-100% {
-transform: translateX(0);
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+
+  20% {
+    transform: translateX(-5px);
+  }
+
+  40% {
+    transform: translateX(5px);
+  }
+
+  60% {
+    transform: translateX(-4px);
+  }
+
+  80% {
+    transform: translateX(3px);
+  }
 }
 
-20% {
-transform: translateX(-5px);
-}
-
-40% {
-transform: translateX(5px);
-}
-
-60% {
-transform: translateX(-4px);
-}
-
-80% {
-transform: translateX(3px);
-}
-}
-
-/* Error icon */
-
-.error-icon {
-width: 16px;
-height: 16px;
-
-display: block;
-}
 
 /* =========================================================
-STOP BUTTON
-========================================================= */
+   STOP
+   ========================================================= */
 
 #stopButton {
-background: #ef4444;
-color: #ffffff;
+  background: #ef4444;
+
+  color: #ffffff;
 }
 
 #stopButton:hover {
-opacity: 0.85;
+  opacity: 0.85;
 
-transform: translateY(-1px);
+  transform: translateY(-1px);
 }
 
 #stopButton:active {
-transform: translateY(1px) scale(0.97);
+  transform:
+    translateY(1px)
+    scale(0.97);
 }
 
+
 /* =========================================================
-DEMO CONTROLS
-========================================================= */
+   DEMO CONTROLS
+   ========================================================= */
 
 .demo-controls {
-width: 100%;
-max-width: 800px;
+  width: 100%;
+  max-width: 800px;
 
-margin: 10px auto 0;
+  margin: 10px auto 0;
 
-display: flex;
-justify-content: center;
+  display: flex;
 
-gap: 8px;
+  justify-content: center;
+
+  gap: 8px;
 }
 
 .demo-controls button {
-border: 1px solid #d4d4d4;
+  border: 1px solid #d4d4d4;
 
-background: #ffffff;
-color: #525252;
+  background: #ffffff;
 
-padding: 7px 11px;
+  color: #525252;
 
-border-radius: 9px;
+  padding: 7px 11px;
 
-font-size: 12px;
+  border-radius: 9px;
 
-cursor: pointer;
+  font-size: 12px;
 
-transition:
-background-color 160ms ease,
-color 160ms ease,
-border-color 160ms ease,
-transform 160ms ease;
+  cursor: pointer;
+
+  transition:
+    background-color 160ms ease,
+    color 160ms ease,
+    border-color 160ms ease,
+    transform 160ms ease;
 }
 
 .demo-controls button:hover {
-background: #f5f5f5;
+  background: #f5f5f5;
 
-border-color: #b5b5b5;
+  border-color: #b5b5b5;
 
-transform: translateY(-1px);
+  transform: translateY(-1px);
 }
 
 .demo-controls button:active {
-transform: scale(0.97);
+  transform: scale(0.97);
 }
 
-.demo-controls button:focus-visible {
-outline: 2px solid #171717;
-
-outline-offset: 2px;
-}
 
 /* =========================================================
-REDUCED MOTION
-========================================================= */
+   REDUCED MOTION
+   ========================================================= */
 
 @media (prefers-reduced-motion: reduce) {
 
-#sendButton,
-#stopButton,
-.send-content,
-.loading-content,
-.success-content,
-.error-content,
-.demo-controls button {
-transition-duration: 1ms !important;
+  #sendButton,
+  #stopButton,
+  .send-content,
+  .loading-content,
+  .success-content,
+  .error-content,
+  .demo-controls button {
+    transition-duration: 1ms !important;
 
-```
-animation-duration: 1ms !important;
-```
+    animation-duration: 1ms !important;
+  }
 
+  .spinner {
+    animation: none;
+  }
+
+  #sendButton:hover:not(:disabled),
+  #stopButton:hover,
+  .demo-controls button:hover {
+    transform: none;
+  }
+
+  #sendButton:active:not(:disabled),
+  #stopButton:active {
+    transform: scale(0.98);
+  }
 }
 
-.spinner {
-animation: none;
-}
-
-#sendButton:hover:not(:disabled),
-#stopButton:hover,
-.demo-controls button:hover {
-transform: none;
-}
-
-#sendButton:active:not(:disabled),
-#stopButton:active {
-transform: scale(0.98);
-}
-}
 
 /* =========================================================
-MOBILE
-========================================================= */
+   MOBILE
+   ========================================================= */
 
 @media (max-width: 600px) {
 
-.header {
-height: 54px;
+  .header {
+    height: 54px;
 
-```
-padding: 0 16px;
-```
+    padding: 0 16px;
+  }
 
-}
+  #messages {
+    padding:
+      24px
+      12px
+      150px;
+  }
 
-#messages {
-padding: 24px 12px 150px;
-}
+  .bubble {
+    max-width: 88%;
+  }
 
-.bubble {
-max-width: 88%;
-}
+  .composer-wrap {
+    padding:
+      10px
+      10px
+      14px;
+  }
 
-.composer-wrap {
-padding: 10px 10px 14px;
-}
+  .composer {
+    border-radius: 16px;
+  }
 
-.composer {
-border-radius: 16px;
-}
+  #sendButton,
+  #stopButton {
+    min-width: 56px;
 
-#sendButton,
-#stopButton {
-min-width: 56px;
+    padding:
+      0
+      10px;
+  }
 
-```
-padding: 0 10px;
-```
+  #sendButton.is-loading,
+  #sendButton.is-success,
+  #sendButton.is-error {
+    min-width: 100px;
+  }
 
-}
+  .welcome h1 {
+    font-size: 36px;
+  }
 
-#sendButton.is-loading,
-#sendButton.is-success,
-#sendButton.is-error {
-min-width: 100px;
-}
+  .welcome p {
+    font-size: 14px;
+  }
 
-.welcome h1 {
-font-size: 36px;
-}
-
-.welcome p {
-font-size: 14px;
-}
-
-.demo-info {
-margin-top: 22px;
-}
-
-.demo-controls {
-padding: 0 4px;
-}
+  .demo-controls {
+    padding: 0 4px;
+  }
 }
