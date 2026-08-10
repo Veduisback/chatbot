@@ -1,3 +1,29 @@
+/* =========================================================
+   DESIGN SYSTEM & CONSTANTS
+   ========================================================= */
+:root {
+  --font-sans: 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+
+  --bg-dark: #080911;
+  --bg-gradient: radial-gradient(circle at 50% 20%, #151828 0%, #0a0b14 55%, #05060a 100%);
+  
+  --accent-purple: #8b5cf6;
+  --accent-indigo: #6366f1;
+  --accent-cyan: #38bdf8;
+  --accent-pink: #ec4899;
+
+  --glass-bg: rgba(255, 255, 255, 0.04);
+  --glass-border: rgba(255, 255, 255, 0.08);
+  --glass-border-hover: rgba(255, 255, 255, 0.18);
+  --glass-shadow: 0 12px 40px rgba(0, 0, 0, 0.45);
+  --glass-blur: blur(20px);
+
+  --text-main: #f8fafc;
+  --text-muted: #94a3b8;
+  --text-dim: #64748b;
+}
+
 * {
   box-sizing: border-box;
 }
@@ -11,32 +37,18 @@ body {
 }
 
 body {
-  font-family:
-    Inter,
-    system-ui,
-    -apple-system,
-    BlinkMacSystemFont,
-    "Segoe UI",
-    sans-serif;
-
-  background:
-    radial-gradient(
-      circle at center,
-      #242424 0%,
-      #101010 45%,
-      #050505 100%
-    );
-
-  color: #ffffff;
-
+  font-family: var(--font-sans);
+  background: var(--bg-dark);
+  background-image: var(--bg-gradient);
+  color: var(--text-main);
   overflow: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
-
 
 /* =========================================================
    ACCESSIBILITY
 ========================================================= */
-
 .sr-only {
   position: absolute;
   width: 1px;
@@ -49,1266 +61,587 @@ body {
   border: 0;
 }
 
-
 /* =========================================================
-   3D SCENE
+   3D CANVAS BACKGROUND
 ========================================================= */
-
-#scene {
+#three-bg {
   position: fixed;
   inset: 0;
-
-  z-index: 0;
-
-  pointer-events: none;
-
-  perspective: 1000px;
-
-  overflow: hidden;
-}
-
-
-/* =========================================================
-   CUBE
-========================================================= */
-
-.cube {
-  position: absolute;
-
-  width: 170px;
-  height: 170px;
-
-  left: 50%;
-  top: 40%;
-
-  transform-style: preserve-3d;
-
-  transform:
-    translate(-50%, -50%)
-    rotateX(-20deg)
-    rotateY(35deg);
-
-  transition:
-    transform 120ms linear;
-
-  will-change: transform;
-}
-
-
-.face {
-  position: absolute;
-
-  width: 170px;
-  height: 170px;
-
-  border: 1px solid
-    rgba(255, 255, 255, 0.16);
-
-  background:
-    linear-gradient(
-      135deg,
-      rgba(255, 255, 255, 0.12),
-      rgba(255, 255, 255, 0.025)
-    );
-
-  backdrop-filter: blur(2px);
-
-  box-shadow:
-    inset 0 0 35px
-      rgba(255, 255, 255, 0.035);
-
-  backface-visibility: visible;
-}
-
-
-/* Front */
-
-.front {
-  transform:
-    translateZ(85px);
-}
-
-
-/* Back */
-
-.back {
-  transform:
-    rotateY(180deg)
-    translateZ(85px);
-}
-
-
-/* Right */
-
-.right {
-  transform:
-    rotateY(90deg)
-    translateZ(85px);
-}
-
-
-/* Left */
-
-.left {
-  transform:
-    rotateY(-90deg)
-    translateZ(85px);
-}
-
-
-/* Top */
-
-.top {
-  transform:
-    rotateX(90deg)
-    translateZ(85px);
-}
-
-
-/* Bottom */
-
-.bottom {
-  transform:
-    rotateX(-90deg)
-    translateZ(85px);
-}
-
-
-/* =========================================================
-   GLOW
-========================================================= */
-
-.glow {
-  position: absolute;
-
-  width: 380px;
-  height: 380px;
-
-  left: 50%;
-  top: 40%;
-
-  transform:
-    translate(-50%, -50%);
-
-  border-radius: 50%;
-
-  background:
-    radial-gradient(
-      circle,
-      rgba(255, 255, 255, 0.12),
-      rgba(255, 255, 255, 0.025) 45%,
-      transparent 70%
-    );
-
-  filter: blur(30px);
-
-  animation:
-    glowPulse 4s ease-in-out infinite;
-}
-
-
-@keyframes glowPulse {
-
-  0%,
-  100% {
-    opacity: 0.55;
-    transform:
-      translate(-50%, -50%)
-      scale(0.9);
-  }
-
-  50% {
-    opacity: 1;
-    transform:
-      translate(-50%, -50%)
-      scale(1.08);
-  }
-}
-
-
-/* =========================================================
-   ORBITS
-========================================================= */
-
-.orbital {
-  position: absolute;
-
-  left: 50%;
-  top: 40%;
-
-  width: 340px;
-  height: 120px;
-
-  transform:
-    translate(-50%, -50%)
-    rotateX(65deg);
-
-  border:
-
-    1px solid
-    rgba(255, 255, 255, 0.08);
-
-  border-radius: 50%;
-
-  animation:
-    orbitSpin 8s linear infinite;
-}
-
-
-.orbital-2 {
-
-  width: 440px;
-  height: 150px;
-
-  transform:
-    translate(-50%, -50%)
-    rotateX(65deg)
-    rotateZ(60deg);
-
-  animation-duration: 12s;
-
-  opacity: 0.45;
-}
-
-
-@keyframes orbitSpin {
-
-  from {
-    transform:
-      translate(-50%, -50%)
-      rotateX(65deg)
-      rotateZ(0deg);
-  }
-
-  to {
-    transform:
-      translate(-50%, -50%)
-      rotateX(65deg)
-      rotateZ(360deg);
-  }
-
-}
-
-
-/* =========================================================
-   APP
-========================================================= */
-
-.app {
-
-  position: relative;
-
-  z-index: 2;
-
+  width: 100vw;
   height: 100vh;
-
-  display: flex;
-
-  flex-direction: column;
-
-  background:
-    rgba(0, 0, 0, 0.05);
+  z-index: 0;
+  pointer-events: none;
+  display: block;
 }
 
+/* =========================================================
+   APPLICATION CONTAINER
+========================================================= */
+.app {
+  position: relative;
+  z-index: 2;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
 
 /* =========================================================
    HEADER
 ========================================================= */
-
 .header {
-
-  height: 60px;
-
+  height: 64px;
   flex-shrink: 0;
-
   display: flex;
-
   align-items: center;
-
   justify-content: space-between;
-
-  padding: 0 24px;
-
-  border-bottom:
-    1px solid
-    rgba(255, 255, 255, 0.1);
-
-  background:
-    rgba(0, 0, 0, 0.18);
-
-  backdrop-filter:
-    blur(12px);
+  padding: 0 28px;
+  background: rgba(10, 11, 20, 0.65);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border-bottom: 1px solid var(--glass-border);
 }
-
 
 .brand {
-
-  font-size: 17px;
-
-  font-weight: 650;
-
-  letter-spacing: -0.2px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
 }
 
+.brand-icon {
+  width: 28px;
+  height: 28px;
+  color: var(--accent-cyan);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.brand .badge {
+  font-size: 10px;
+  font-weight: 600;
+  padding: 2px 7px;
+  border-radius: 20px;
+  background: rgba(139, 92, 246, 0.18);
+  color: var(--accent-purple);
+  border: 1px solid rgba(139, 92, 246, 0.3);
+}
+
+.status-container {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 14px;
+  border-radius: 20px;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+}
+
+.status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #22c55e;
+  box-shadow: 0 0 10px #22c55e;
+  animation: pulseDot 2s ease-in-out infinite;
+}
+
+@keyframes pulseDot {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.5; transform: scale(0.85); }
+}
 
 .status {
-
   font-size: 13px;
-
-  color:
-    rgba(255, 255, 255, 0.55);
+  font-weight: 500;
+  color: var(--text-muted);
 }
 
-
 /* =========================================================
-   MESSAGES
+   MESSAGES WINDOW
 ========================================================= */
-
 #messages {
-
   flex: 1;
-
   overflow-y: auto;
-
-  padding:
-    32px
-    20px
-    180px;
-
+  padding: 40px 24px 190px;
   scroll-behavior: smooth;
 }
 
+#messages::-webkit-scrollbar {
+  width: 6px;
+}
+#messages::-webkit-scrollbar-track {
+  background: transparent;
+}
+#messages::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.12);
+  border-radius: 10px;
+}
+#messages::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.25);
+}
 
+/* =========================================================
+   WELCOME HERO SECTION
+========================================================= */
 .welcome {
-
-  min-height: 60%;
-
+  min-height: 70vh;
   display: flex;
-
   align-items: center;
-
   justify-content: center;
-
   text-align: center;
 }
 
-
 .welcome-inner {
-
-  max-width: 600px;
-
-  padding: 30px;
+  max-width: 680px;
+  padding: 20px;
 }
 
+.welcome-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: 20px;
+  background: rgba(99, 102, 241, 0.12);
+  border: 1px solid rgba(99, 102, 241, 0.25);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--accent-cyan);
+  margin-bottom: 20px;
+}
 
 .welcome h1 {
-
-  margin:
-    0 0 12px;
-
-  font-size:
-    clamp(34px, 6vw, 54px);
-
-  letter-spacing:
-    -2px;
-
-  text-shadow:
-    0 0 30px
-    rgba(255, 255, 255, 0.15);
+  margin: 0 0 16px;
+  font-size: clamp(38px, 5vw, 56px);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1.1;
+  background: linear-gradient(135deg, #ffffff 30%, var(--accent-purple) 70%, var(--accent-cyan) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
-
 
 .welcome p {
-
-  margin: 0;
-
+  margin: 0 auto 36px;
+  max-width: 520px;
+  font-size: 16px;
   line-height: 1.6;
-
-  color:
-    rgba(255, 255, 255, 0.62);
-
-  font-size: 15px;
+  color: var(--text-muted);
 }
 
+/* Suggestion Grid */
+.suggestion-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 12px;
+  max-width: 640px;
+  margin: 0 auto;
+}
 
-/* =========================================================
-   DEMO INFO
-========================================================= */
-
-.demo-info {
-
-  margin-top: 24px;
-
+.suggestion-chip {
   display: flex;
-
-  flex-direction: column;
-
-  gap: 6px;
-
-  font-size: 12px;
-
-  color:
-    rgba(255, 255, 255, 0.42);
+  align-items: center;
+  gap: 12px;
+  padding: 14px 18px;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--glass-border);
+  color: var(--text-main);
+  cursor: pointer;
+  text-align: left;
+  transition: all 240ms cubic-bezier(0.16, 1, 0.3, 1);
+  backdrop-filter: blur(12px);
 }
 
+.suggestion-chip:hover {
+  background: rgba(255, 255, 255, 0.07);
+  border-color: rgba(139, 92, 246, 0.4);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(139, 92, 246, 0.15);
+}
+
+.chip-icon {
+  font-size: 18px;
+}
+
+.chip-text {
+  font-size: 13.5px;
+  font-weight: 500;
+  line-height: 1.4;
+  color: var(--text-muted);
+}
+
+.suggestion-chip:hover .chip-text {
+  color: var(--text-main);
+}
 
 /* =========================================================
    CHAT MESSAGES
 ========================================================= */
-
 .message {
-
   width: 100%;
-
-  max-width: 800px;
-
-  margin:
-    0 auto
-    20px;
-
+  max-width: 820px;
+  margin: 0 auto 24px;
   display: flex;
+  gap: 14px;
+  animation: messageFadeIn 300ms ease-out forwards;
 }
 
+@keyframes messageFadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
 
 .message.user {
-
-  justify-content:
-    flex-end;
+  flex-direction: row-reverse;
 }
 
-
-.message.assistant {
-
-  justify-content:
-    flex-start;
+.message-avatar {
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 700;
+  flex-shrink: 0;
 }
 
+.message.user .message-avatar {
+  background: linear-gradient(135deg, var(--accent-indigo), var(--accent-purple));
+  color: white;
+  box-shadow: 0 4px 14px rgba(99, 102, 241, 0.3);
+}
+
+.message.assistant .message-avatar {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid var(--glass-border);
+  color: var(--accent-cyan);
+}
 
 .bubble {
-
-  max-width:
-    min(75%, 650px);
-
-  padding:
-    12px
-    16px;
-
-  border-radius:
-    16px;
-
-  line-height:
-    1.55;
-
-  white-space:
-    pre-wrap;
-
-  overflow-wrap:
-    anywhere;
-
-  backdrop-filter:
-    blur(12px);
+  max-width: min(80%, 650px);
+  padding: 14px 20px;
+  border-radius: 18px;
+  font-size: 15px;
+  line-height: 1.6;
+  white-space: pre-wrap;
+  word-break: break-word;
 }
-
 
 .message.user .bubble {
-
-  background:
-    rgba(255, 255, 255, 0.9);
-
-  color:
-    #111111;
-
-  border-bottom-right-radius:
-    5px;
+  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+  color: #ffffff;
+  border-top-right-radius: 4px;
+  box-shadow: 0 8px 24px rgba(99, 102, 241, 0.25);
 }
-
 
 .message.assistant .bubble {
-
-  background:
-    rgba(255, 255, 255, 0.08);
-
-  border:
-    1px solid
-    rgba(255, 255, 255, 0.1);
-
-  color:
-    #ffffff;
-
-  border-bottom-left-radius:
-    5px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--glass-border);
+  color: var(--text-main);
+  border-top-left-radius: 4px;
+  backdrop-filter: var(--glass-blur);
+  box-shadow: var(--glass-shadow);
 }
 
-
-.message.assistant
-.bubble.streaming:empty::after {
-
-  content:
-    "▌";
-
-  animation:
-    blink 0.8s infinite;
+.message.assistant .bubble.streaming:empty::after {
+  content: "▌";
+  color: var(--accent-cyan);
+  animation: blink 0.7s infinite;
 }
 
-
-.message.assistant
-.bubble.error {
-
-  color:
-    #ff8d8d;
-
-  background:
-    rgba(255, 40, 40, 0.1);
+.message.assistant .bubble.error {
+  background: rgba(239, 68, 68, 0.1);
+  border-color: rgba(239, 68, 68, 0.3);
+  color: #fca5a5;
 }
-
 
 @keyframes blink {
-
-  50% {
-    opacity: 0;
-  }
-
+  50% { opacity: 0; }
 }
 
-
 /* =========================================================
-   COMPOSER
+   COMPOSER BAR
 ========================================================= */
-
 .composer-wrap {
-
   position: fixed;
-
   left: 0;
   right: 0;
   bottom: 0;
-
   z-index: 10;
-
-  padding:
-    16px
-    20px
-    20px;
-
-  background:
-    linear-gradient(
-      to top,
-      rgba(0, 0, 0, 0.75),
-      rgba(0, 0, 0, 0)
-    );
+  padding: 20px;
+  background: linear-gradient(to top, rgba(8, 9, 17, 0.95) 60%, rgba(8, 9, 17, 0));
+  pointer-events: none;
 }
 
+.composer,
+.demo-controls {
+  pointer-events: auto;
+}
 
 .composer {
-
   width: 100%;
-
-  max-width: 800px;
-
+  max-width: 820px;
   margin: 0 auto;
-
   display: flex;
-
   align-items: flex-end;
-
-  gap: 8px;
-
-  padding: 8px;
-
-  border:
-    1px solid
-    rgba(255, 255, 255, 0.18);
-
-  border-radius:
-    18px;
-
-  background:
-    rgba(255, 255, 255, 0.08);
-
-  backdrop-filter:
-    blur(18px);
-
-  box-shadow:
-    0 10px 50px
-    rgba(0, 0, 0, 0.35);
+  gap: 12px;
+  padding: 10px 12px 10px 18px;
+  border-radius: 24px;
+  background: rgba(20, 22, 38, 0.75);
+  border: 1px solid var(--glass-border-hover);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  transition: border-color 200ms ease, box-shadow 200ms ease;
 }
 
-
-/* =========================================================
-   INPUT
-========================================================= */
+.composer:focus-within {
+  border-color: rgba(139, 92, 246, 0.5);
+  box-shadow: 0 16px 45px rgba(0, 0, 0, 0.55), 0 0 20px rgba(139, 92, 246, 0.2);
+}
 
 #messageInput {
-
   flex: 1;
-
   min-height: 42px;
-
   max-height: 180px;
-
   resize: none;
-
   border: none;
-
   outline: none;
-
-  padding:
-    11px
-    10px;
-
-  line-height: 20px;
-
-  background:
-    transparent;
-
-  color:
-    #ffffff;
+  padding: 10px 0;
+  font-family: var(--font-sans);
+  font-size: 15px;
+  line-height: 1.5;
+  background: transparent;
+  color: var(--text-main);
 }
-
 
 #messageInput::placeholder {
-
-  color:
-    rgba(255, 255, 255, 0.4);
+  color: var(--text-dim);
 }
 
-
 #messageInput:disabled {
-
   opacity: 0.5;
 }
 
-
 /* =========================================================
-   SEND + STOP BUTTONS
+   ACTION BUTTONS
 ========================================================= */
+.action-buttons {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
 
 #sendButton,
 #stopButton {
-
   position: relative;
-
-  min-width: 70px;
-
-  height: 40px;
-
-  padding:
-    0 16px;
-
+  height: 42px;
+  min-width: 80px;
+  padding: 0 18px;
   border: none;
-
-  border-radius:
-    12px;
-
-  cursor: pointer;
-
+  border-radius: 16px;
+  font-family: var(--font-sans);
   font-size: 14px;
-
   font-weight: 600;
-
+  cursor: pointer;
   display: inline-flex;
-
   align-items: center;
-
   justify-content: center;
-
   gap: 8px;
-
   overflow: hidden;
-
-  transition:
-    transform 180ms ease,
-    background-color 220ms ease,
-    box-shadow 220ms ease;
+  transition: all 200ms cubic-bezier(0.16, 1, 0.3, 1);
 }
-
 
 #sendButton {
-
-  background:
-    rgba(255, 255, 255, 0.95);
-
-  color:
-    #111111;
+  background: linear-gradient(135deg, var(--text-main), #e2e8f0);
+  color: #0f172a;
+  box-shadow: 0 4px 14px rgba(255, 255, 255, 0.15);
 }
 
+#sendButton:hover:not(:disabled) {
+  transform: translateY(-1px);
+  background: #ffffff;
+  box-shadow: 0 6px 20px rgba(255, 255, 255, 0.25);
+}
+
+#sendButton:active:not(:disabled) {
+  transform: scale(0.97);
+}
 
 #stopButton {
-
-  background:
-    #ef4444;
-
-  color:
-    white;
+  background: rgba(239, 68, 68, 0.2);
+  border: 1px solid rgba(239, 68, 68, 0.4);
+  color: #fca5a5;
 }
 
-
-/* Hover */
-
-#sendButton:hover:not(:disabled),
 #stopButton:hover {
-
-  transform:
-    translateY(-1px);
-
-  box-shadow:
-    0 5px 20px
-    rgba(0, 0, 0, 0.25);
+  background: rgba(239, 68, 68, 0.35);
+  color: #ffffff;
 }
 
-
-/* Active */
-
-#sendButton:active:not(:disabled),
-#stopButton:active {
-
-  transform:
-    scale(0.96);
+.send-icon,
+.button-icon {
+  width: 16px;
+  height: 16px;
 }
 
-
-/* Focus */
-
-#sendButton:focus-visible,
-#stopButton:focus-visible,
-#demoSuccess:focus-visible,
-#demoError:focus-visible {
-
-  outline:
-    3px solid
-    rgba(255, 255, 255, 0.45);
-
-  outline-offset:
-    3px;
-}
-
-
-/* =========================================================
-   BUTTON CONTENT
-========================================================= */
-
+/* Button Content Lifecycle */
 .send-content,
 .loading-content,
 .success-content,
 .error-content {
-
   display: inline-flex;
-
   align-items: center;
-
   justify-content: center;
-
-  gap: 7px;
-
-  transition:
-    opacity 180ms ease,
-    transform 220ms ease;
+  gap: 6px;
+  transition: opacity 180ms ease, transform 200ms ease;
 }
-
 
 .loading-content,
 .success-content,
 .error-content {
-
   position: absolute;
-
   opacity: 0;
-
   pointer-events: none;
-
-  transform:
-    translateY(8px)
-    scale(0.96);
+  transform: translateY(8px) scale(0.95);
 }
 
-
-/* =========================================================
-   LOADING
-========================================================= */
-
+/* Loading State */
 #sendButton.is-loading {
-
-  cursor: wait;
-
   min-width: 110px;
-
-  background:
-    rgba(255, 255, 255, 0.18);
-
-  color: white;
+  background: rgba(255, 255, 255, 0.15);
+  color: #ffffff;
+  cursor: wait;
 }
 
-
-#sendButton.is-loading
-.send-content {
-
+#sendButton.is-loading .send-content {
   opacity: 0;
-
-  transform:
-    translateY(-8px)
-    scale(0.96);
+  transform: translateY(-8px) scale(0.95);
 }
 
-
-#sendButton.is-loading
-.loading-content {
-
+#sendButton.is-loading .loading-content {
   opacity: 1;
-
-  transform:
-    translateY(0)
-    scale(1);
+  transform: translateY(0) scale(1);
 }
-
-
-/* Spinner */
 
 .spinner {
-
-  width: 15px;
-
-  height: 15px;
-
-  border:
-    2px solid
-    rgba(255, 255, 255, 0.25);
-
-  border-top-color:
-    white;
-
+  width: 14px;
+  height: 14px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top-color: #ffffff;
   border-radius: 50%;
-
-  animation:
-    spinnerRotate 700ms linear infinite;
+  animation: spin 700ms linear infinite;
 }
 
-
-@keyframes spinnerRotate {
-
-  to {
-    transform:
-      rotate(360deg);
-  }
-
+@keyframes spin {
+  to { transform: rotate(360deg); }
 }
 
-
-/* =========================================================
-   SUCCESS
-========================================================= */
-
+/* Success State */
 #sendButton.is-success {
-
-  min-width: 110px;
-
-  cursor: default;
-
-  background:
-    #16803c;
-
-  color: white;
+  min-width: 100px;
+  background: #16a34a;
+  color: #ffffff;
 }
 
-
-#sendButton.is-success
-.send-content,
-#sendButton.is-success
-.loading-content,
-#sendButton.is-success
-.error-content {
-
+#sendButton.is-success .send-content,
+#sendButton.is-success .loading-content {
   opacity: 0;
-
-  transform:
-    scale(0.9);
 }
 
-
-#sendButton.is-success
-.success-content {
-
+#sendButton.is-success .success-content {
   opacity: 1;
-
-  transform:
-    scale(1);
+  transform: translateY(0) scale(1);
 }
 
-
-.success-icon {
-
-  width: 16px;
-
-  height: 16px;
-
-  stroke:
-    currentColor;
-
-  stroke-width:
-    2.5;
-
-  stroke-linecap:
-    round;
-
-  stroke-linejoin:
-    round;
-
-  animation:
-    successPop 300ms ease;
-}
-
-
-@keyframes successPop {
-
-  0% {
-
-    opacity: 0;
-
-    transform:
-      scale(0.5);
-  }
-
-  70% {
-
-    transform:
-      scale(1.15);
-  }
-
-  100% {
-
-    opacity: 1;
-
-    transform:
-      scale(1);
-  }
-
-}
-
-
-/* =========================================================
-   ERROR
-========================================================= */
-
+/* Error State */
 #sendButton.is-error {
-
-  min-width: 110px;
-
-  background:
-    #c62828;
-
-  color: white;
+  min-width: 100px;
+  background: #dc2626;
+  color: #ffffff;
 }
 
-
-#sendButton.is-error
-.send-content,
-#sendButton.is-error
-.loading-content,
-#sendButton.is-error
-.success-content {
-
+#sendButton.is-error .send-content {
   opacity: 0;
-
-  transform:
-    scale(0.9);
 }
 
-
-#sendButton.is-error
-.error-content {
-
+#sendButton.is-error .error-content {
   opacity: 1;
-
-  transform:
-    scale(1);
+  transform: translateY(0) scale(1);
 }
-
-
-/* Error shake */
 
 #sendButton.shake {
-
-  animation:
-    buttonShake 360ms ease-in-out;
+  animation: buttonShake 380ms ease-in-out;
 }
-
 
 @keyframes buttonShake {
-
-  0%,
-  100% {
-    transform:
-      translateX(0);
-  }
-
-  20% {
-    transform:
-      translateX(-5px);
-  }
-
-  40% {
-    transform:
-      translateX(5px);
-  }
-
-  60% {
-    transform:
-      translateX(-4px);
-  }
-
-  80% {
-    transform:
-      translateX(3px);
-  }
-
+  0%, 100% { transform: translateX(0); }
+  20% { transform: translateX(-6px); }
+  40% { transform: translateX(6px); }
+  60% { transform: translateX(-4px); }
+  80% { transform: translateX(4px); }
 }
-
 
 /* =========================================================
-   DEMO BUTTONS
+   DEMO CONTROLS
 ========================================================= */
-
 .demo-controls {
-
-  width: 100%;
-
-  max-width: 800px;
-
-  margin:
-    10px auto
-    0;
-
   display: flex;
-
-  justify-content:
-    center;
-
-  gap: 8px;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 10px;
 }
-
 
 .demo-controls button {
-
-  padding:
-    7px
-    12px;
-
-  border:
-    1px solid
-    rgba(255, 255, 255, 0.12);
-
-  border-radius:
-    9px;
-
-  background:
-    rgba(255, 255, 255, 0.05);
-
-  color:
-    rgba(255, 255, 255, 0.55);
-
-  cursor:
-    pointer;
-
-  font-size:
-    11px;
-
-  transition:
-    background 180ms ease,
-    color 180ms ease;
+  padding: 6px 12px;
+  border-radius: 10px;
+  border: 1px solid var(--glass-border);
+  background: var(--glass-bg);
+  color: var(--text-dim);
+  font-size: 11px;
+  cursor: pointer;
+  transition: all 180ms ease;
 }
-
 
 .demo-controls button:hover {
-
-  background:
-    rgba(255, 255, 255, 0.1);
-
-  color:
-    white;
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--text-muted);
 }
 
-
 /* =========================================================
-   REDUCED MOTION
+   MEDIA QUERIES
 ========================================================= */
-
-@media (prefers-reduced-motion: reduce) {
-
-  *,
-  *::before,
-  *::after {
-
-    animation-duration:
-      1ms !important;
-
-    animation-iteration-count:
-      1 !important;
-
-    transition-duration:
-      1ms !important;
-  }
-
-}
-
-
-/* =========================================================
-   MOBILE
-========================================================= */
-
-@media (max-width: 600px) {
-
+@media (max-width: 640px) {
   .header {
-
-    height: 54px;
-
-    padding:
-      0 16px;
+    padding: 0 16px;
+    height: 56px;
   }
-
 
   #messages {
-
-    padding:
-      24px
-      12px
-      180px;
+    padding: 24px 16px 180px;
   }
-
 
   .bubble {
-
-    max-width:
-      88%;
+    max-width: 88%;
   }
 
+  .suggestion-grid {
+    grid-template-columns: 1fr;
+  }
 
   .composer-wrap {
-
-    padding:
-      10px
-      10px
-      14px;
+    padding: 12px;
   }
-
 
   .composer {
-
-    border-radius:
-      16px;
+    padding: 8px 10px 8px 14px;
+    border-radius: 20px;
   }
-
-
-  #sendButton,
-  #stopButton {
-
-    min-width:
-      56px;
-
-    padding:
-      0 10px;
-  }
-
-
-  #sendButton.is-loading,
-  #sendButton.is-success,
-  #sendButton.is-error {
-
-    min-width:
-      100px;
-  }
-
-
-  .welcome h1 {
-
-    font-size:
-      36px;
-  }
-
-
-  .welcome p {
-
-    font-size:
-      14px;
-  }
-
-
-  .cube {
-
-    width:
-      120px;
-
-    height:
-      120px;
-  }
-
-
-  .face {
-
-    width:
-      120px;
-
-    height:
-      120px;
-  }
-
-
-  .front {
-
-    transform:
-      translateZ(60px);
-  }
-
-
-  .back {
-
-    transform:
-      rotateY(180deg)
-      translateZ(60px);
-  }
-
-
-  .right {
-
-    transform:
-      rotateY(90deg)
-      translateZ(60px);
-  }
-
-
-  .left {
-
-    transform:
-      rotateY(-90deg)
-      translateZ(60px);
-  }
-
-
-  .top {
-
-    transform:
-      rotateX(90deg)
-      translateZ(60px);
-  }
-
-
-  .bottom {
-
-    transform:
-      rotateX(-90deg)
-      translateZ(60px);
-  }
-
 }
 
-
-/* =========================================================
-   VERY SMALL SCREENS
-========================================================= */
-
-@media (max-width: 400px) {
-
-  .demo-controls {
-
-    display: none;
-  }
-
-}

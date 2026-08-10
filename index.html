@@ -2,271 +2,156 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="AI Chat — Next-generation interactive streaming AI assistant with 3D WebGL background" />
+  <title>AI Chat — Next-Gen Intelligence</title>
 
-  <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0"
-  />
-
-  <meta
-    name="description"
-    content="AI Chat — interactive AI assistant"
-  />
-
-  <title>AI Chat</title>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300..800;1,300..800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 
   <link rel="stylesheet" href="style.css" />
 </head>
-
 <body>
 
-  <!-- =====================================================
-       BACKGROUND 3D OBJECT
-  ====================================================== -->
+  <!-- 3D WebGL Canvas Background -->
+  <canvas id="three-bg" aria-hidden="true"></canvas>
 
-  <div id="scene" aria-hidden="true">
-
-    <div class="orbital orbital-1"></div>
-    <div class="orbital orbital-2"></div>
-
-    <div
-      id="cube"
-      class="cube"
-    >
-      <div class="face front"></div>
-      <div class="face back"></div>
-      <div class="face right"></div>
-      <div class="face left"></div>
-      <div class="face top"></div>
-      <div class="face bottom"></div>
-    </div>
-
-    <div class="glow"></div>
-
-  </div>
-
-
-  <!-- =====================================================
-       APP
-  ====================================================== -->
-
+  <!-- Main Application Wrapper -->
   <div class="app">
 
+    <!-- Header -->
     <header class="header">
-
       <div class="brand">
-        AI Chat
+        <div class="brand-icon">
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M2 17L12 22L22 17" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M2 12L12 17L22 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <span>AI Chat</span>
+        <span class="badge">v2.0</span>
       </div>
 
-      <div
-        id="status"
-        class="status"
-        aria-live="polite"
-      >
-        Ready
+      <div class="status-container">
+        <span class="status-dot"></span>
+        <div id="status" class="status" aria-live="polite">Ready</div>
       </div>
-
     </header>
 
+    <!-- Conversation Messages Window -->
+    <main id="messages" aria-label="Conversation history">
 
-    <!-- ===================================================
-         MESSAGES
-    ==================================================== -->
-
-    <main
-      id="messages"
-      aria-label="Conversation"
-    >
-
-      <section
-        id="welcome"
-        class="welcome"
-      >
-
+      <section id="welcome" class="welcome">
         <div class="welcome-inner">
-
-          <h1>
-            Ask anything.
-          </h1>
-
+          <div class="welcome-badge">
+            <span class="sparkle">✨</span> Interactive 3D AI Assistant
+          </div>
+          <h1>Ask Anything.</h1>
           <p>
-            A simple AI chatbot with streaming responses,
-            multi-turn conversations, and stoppable generation.
+            Experience instant streaming responses, real-time multi-turn conversation, and stoppable generation powered by modern AI.
           </p>
 
-          <div class="demo-info">
-
-            <span>
-              Interactive 3D background
-            </span>
-
-            <span>
-              Move your mouse or drag
-            </span>
-
+          <div class="suggestion-grid" id="suggestionGrid">
+            <button type="button" class="suggestion-chip" data-prompt="Explain quantum computing in simple terms">
+              <span class="chip-icon">⚡</span>
+              <span class="chip-text">Explain quantum computing in simple terms</span>
+            </button>
+            <button type="button" class="suggestion-chip" data-prompt="Write a Python script for web scraping">
+              <span class="chip-icon">🐍</span>
+              <span class="chip-text">Write a Python script for web scraping</span>
+            </button>
+            <button type="button" class="suggestion-chip" data-prompt="Help me brainstorm ideas for a mobile app">
+              <span class="chip-icon">💡</span>
+              <span class="chip-text">Brainstorm creative mobile app ideas</span>
+            </button>
+            <button type="button" class="suggestion-chip" data-prompt="Draft a polite email asking for project feedback">
+              <span class="chip-icon">✉️</span>
+              <span class="chip-text">Draft a professional feedback email</span>
+            </button>
           </div>
-
         </div>
-
       </section>
 
     </main>
 
-
-    <!-- ===================================================
-         COMPOSER
-    ==================================================== -->
-
+    <!-- Composer Section -->
     <div class="composer-wrap">
-
-      <form
-        id="chatForm"
-        class="composer"
-      >
-
-        <label
-          class="sr-only"
-          for="messageInput"
-        >
-          Message AI
-        </label>
-
+      <form id="chatForm" class="composer" aria-label="Chat message form">
+        <label class="sr-only" for="messageInput">Message</label>
+        
         <textarea
           id="messageInput"
           rows="1"
-          placeholder="Message AI..."
-          aria-label="Message AI"
+          placeholder="Type a message or click a prompt above..."
+          aria-label="Message"
           autocomplete="off"
         ></textarea>
 
-
-        <!-- SEND -->
-
-        <button
-          id="sendButton"
-          type="submit"
-          aria-label="Send message"
-        >
-
-          <span class="send-content">
-            <span>Send</span>
-          </span>
-
-
-          <span
-            class="loading-content"
-            aria-hidden="true"
+        <div class="action-buttons">
+          <!-- STOP BUTTON -->
+          <button
+            id="stopButton"
+            type="button"
+            hidden
+            aria-label="Stop"
           >
-
-            <span class="spinner"></span>
-
-            <span>
-              Sending
-            </span>
-
-          </span>
-
-
-          <span
-            class="success-content"
-            aria-hidden="true"
-          >
-
-            <svg
-              class="success-icon"
-              viewBox="0 0 24 24"
-              fill="none"
-            >
-
-              <path
-                d="M5 12.5L9.5 17L19 7"
-              />
-
+            <svg class="button-icon" viewBox="0 0 24 24" fill="currentColor">
+              <rect x="6" y="6" width="12" height="12" rx="2" />
             </svg>
+            <span>Stop</span>
+          </button>
 
-            <span>
-              Sent
-            </span>
-
-          </span>
-
-
-          <span
-            class="error-content"
-            aria-hidden="true"
+          <!-- SEND BUTTON -->
+          <button
+            id="sendButton"
+            type="submit"
+            aria-label="Send"
           >
-
-            <svg
-              class="error-icon"
-              viewBox="0 0 24 24"
-              fill="none"
-            >
-
-              <circle
-                cx="12"
-                cy="12"
-                r="9"
-              />
-
-              <path
-                d="M12 8v5"
-              />
-
-              <path
-                d="M12 16h.01"
-              />
-
-            </svg>
-
-            <span>
-              Retry
+            <span class="send-content">
+              <span>Send</span>
+              <svg class="send-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M22 2L11 13M22 2L15 22L11 13M22 2L2 9L11 13" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
             </span>
 
-          </span>
+            <span class="loading-content" aria-hidden="true">
+              <span class="spinner"></span>
+              <span>Sending</span>
+            </span>
 
-        </button>
+            <span class="success-content" aria-hidden="true">
+              <svg class="success-icon" viewBox="0 0 24 24" fill="none">
+                <path d="M5 12.5L9.5 17L19 7" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+              <span>Sent</span>
+            </span>
 
-
-        <!-- STOP -->
-
-        <button
-          id="stopButton"
-          type="button"
-          hidden
-          aria-label="Stop generation"
-        >
-          Stop
-        </button>
-
+            <span class="error-content" aria-hidden="true">
+              <svg class="error-icon" viewBox="0 0 24 24" fill="none">
+                <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="2"/>
+                <path d="M12 8v5M12 16h.01" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+              </svg>
+              <span>Retry</span>
+            </span>
+          </button>
+        </div>
       </form>
 
-
       <!-- DEMO CONTROLS -->
-
       <div class="demo-controls">
-
-        <button
-          id="demoSuccess"
-          type="button"
-        >
-          Test Success
-        </button>
-
-        <button
-          id="demoError"
-          type="button"
-        >
-          Test Error
-        </button>
-
+        <button id="demoSuccess" type="button">Test Success State</button>
+        <button id="demoError" type="button">Test Error State</button>
       </div>
-
     </div>
 
   </div>
 
-
+  <!-- Scripts -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="three-background.js"></script>
   <script src="app.js"></script>
-
 </body>
 </html>
