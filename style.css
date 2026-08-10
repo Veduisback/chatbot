@@ -1,268 +1,552 @@
 * {
   box-sizing: border-box;
-}
+  }
 
 html,
 body {
-  margin: 0;
-  padding: 0;
-  width: 100%;
-  height: 100%;
-  font-family:
-    Inter,
-    system-ui,
-    -apple-system,
-    BlinkMacSystemFont,
-    "Segoe UI",
-    sans-serif;
-  background: #ffffff;
-  color: #171717;
+margin: 0;
+padding: 0;
+width: 100%;
+height: 100%;
+font-family:
+Inter,
+system-ui,
+-apple-system,
+BlinkMacSystemFont,
+"Segoe UI",
+sans-serif;
+background: #ffffff;
+color: #171717;
 }
 
 body {
-  overflow: hidden;
+overflow: hidden;
 }
 
 button,
 textarea {
-  font: inherit;
+font: inherit;
 }
 
 .app {
-  height: 100vh;
-  display: flex;
-  flex-direction: column;
+height: 100vh;
+display: flex;
+flex-direction: column;
 }
 
 /* Header */
 
 .header {
-  height: 60px;
-  flex-shrink: 0;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 24px;
-  border-bottom: 1px solid #e5e5e5;
-  background: #ffffff;
+height: 60px;
+flex-shrink: 0;
+display: flex;
+align-items: center;
+justify-content: space-between;
+padding: 0 24px;
+border-bottom: 1px solid #e5e5e5;
+background: #ffffff;
 }
 
 .brand {
-  font-size: 17px;
-  font-weight: 650;
+font-size: 17px;
+font-weight: 650;
 }
 
 .status {
-  font-size: 13px;
-  color: #737373;
+font-size: 13px;
+color: #737373;
 }
 
 /* Messages */
 
 #messages {
-  flex: 1;
-  overflow-y: auto;
-  padding: 32px 20px 140px;
-  scroll-behavior: smooth;
+flex: 1;
+overflow-y: auto;
+padding: 32px 20px 140px;
+scroll-behavior: smooth;
 }
 
 .welcome {
-  min-height: 60%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
+min-height: 60%;
+display: flex;
+align-items: center;
+justify-content: center;
+text-align: center;
 }
 
 .welcome-inner {
-  max-width: 600px;
+max-width: 600px;
 }
 
 .welcome h1 {
-  margin: 0 0 12px;
-  font-size: clamp(32px, 6vw, 52px);
-  letter-spacing: -1.5px;
+margin: 0 0 12px;
+font-size: clamp(32px, 6vw, 52px);
+letter-spacing: -1.5px;
 }
 
 .welcome p {
-  margin: 0;
-  line-height: 1.6;
-  color: #737373;
-  font-size: 15px;
+margin: 0;
+line-height: 1.6;
+color: #737373;
+font-size: 15px;
 }
 
 /* Chat messages */
 
 .message {
-  width: 100%;
-  max-width: 800px;
-  margin: 0 auto 20px;
-  display: flex;
+width: 100%;
+max-width: 800px;
+margin: 0 auto 20px;
+display: flex;
 }
 
 .message.user {
-  justify-content: flex-end;
+justify-content: flex-end;
 }
 
 .message.assistant {
-  justify-content: flex-start;
+justify-content: flex-start;
 }
 
 .bubble {
-  max-width: min(75%, 650px);
-  padding: 12px 16px;
-  border-radius: 16px;
-  line-height: 1.55;
-  white-space: pre-wrap;
-  overflow-wrap: anywhere;
+max-width: min(75%, 650px);
+padding: 12px 16px;
+border-radius: 16px;
+line-height: 1.55;
+white-space: pre-wrap;
+overflow-wrap: anywhere;
 }
 
 .message.user .bubble {
-  background: #171717;
-  color: #ffffff;
-  border-bottom-right-radius: 5px;
+background: #171717;
+color: #ffffff;
+border-bottom-right-radius: 5px;
 }
 
 .message.assistant .bubble {
-  background: #f3f3f3;
-  color: #171717;
-  border-bottom-left-radius: 5px;
+background: #f3f3f3;
+color: #171717;
+border-bottom-left-radius: 5px;
 }
 
 .message.assistant .bubble:empty::after {
-  content: "▌";
-  animation: blink 0.8s infinite;
+content: "▌";
+animation: blink 0.8s infinite;
 }
 
 .message.assistant .bubble.error {
-  color: #b42318;
-  background: #fff1f0;
+color: #b42318;
+background: #fff1f0;
 }
 
 @keyframes blink {
-  50% {
-    opacity: 0;
-  }
+50% {
+opacity: 0;
+}
 }
 
 /* Composer */
 
 .composer-wrap {
-  position: fixed;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  padding: 16px 20px 20px;
-  background: linear-gradient(
-    to top,
-    #ffffff 70%,
-    rgba(255, 255, 255, 0)
-  );
+position: fixed;
+left: 0;
+right: 0;
+bottom: 0;
+padding: 16px 20px 20px;
+background: linear-gradient(
+to top,
+#ffffff 70%,
+rgba(255, 255, 255, 0)
+);
 }
 
 .composer {
-  width: 100%;
-  max-width: 800px;
-  margin: 0 auto;
-  display: flex;
-  align-items: flex-end;
-  gap: 8px;
-  padding: 8px;
-  border: 1px solid #d4d4d4;
-  border-radius: 18px;
-  background: #ffffff;
-  box-shadow:
-    0 4px 20px rgba(0, 0, 0, 0.06);
+width: 100%;
+max-width: 800px;
+margin: 0 auto;
+display: flex;
+align-items: flex-end;
+gap: 8px;
+padding: 8px;
+border: 1px solid #d4d4d4;
+border-radius: 18px;
+background: #ffffff;
+box-shadow:
+0 4px 20px rgba(0, 0, 0, 0.06);
 }
 
 #messageInput {
-  flex: 1;
-  min-height: 42px;
-  max-height: 180px;
-  resize: none;
-  border: none;
-  outline: none;
-  padding: 11px 10px;
-  line-height: 20px;
-  background: transparent;
-  color: #171717;
+flex: 1;
+min-height: 42px;
+max-height: 180px;
+resize: none;
+border: none;
+outline: none;
+padding: 11px 10px;
+line-height: 20px;
+background: transparent;
+color: #171717;
 }
 
 #messageInput::placeholder {
-  color: #a3a3a3;
+color: #a3a3a3;
 }
 
 #messageInput:disabled {
-  opacity: 0.6;
+opacity: 0.6;
+}
+
+/* =========================================================
+SEND BUTTON
+========================================================= */
+
+#sendButton,
+#stopButton {
+position: relative;
+min-width: 64px;
+height: 40px;
+padding: 0 16px;
+border: none;
+border-radius: 12px;
+cursor: pointer;
+font-size: 14px;
+font-weight: 600;
+
+display: inline-flex;
+align-items: center;
+justify-content: center;
+gap: 8px;
+
+overflow: hidden;
+
+/*
+transform + opacity are compositor-friendly and avoid
+unnecessary layout recalculation during animation.
+*/
+transition:
+transform 180ms cubic-bezier(0.2, 0.8, 0.2, 1),
+opacity 180ms ease,
+background-color 220ms ease,
+box-shadow 220ms ease,
+color 220ms ease;
+}
+
+#sendButton {
+background: #171717;
+color: #ffffff;
+}
+
+/* -------------------------
+Hover
+------------------------- */
+
+#sendButton:hover:not(:disabled) {
+transform: translateY(-1px);
+box-shadow:
+0 5px 14px rgba(0, 0, 0, 0.14);
+}
+
+/* -------------------------
+Keyboard focus
+------------------------- */
+
+#sendButton:focus-visible {
+outline: 3px solid rgba(23, 23, 23, 0.22);
+outline-offset: 3px;
+}
+
+/* -------------------------
+Active / pressed
+------------------------- */
+
+#sendButton:active:not(:disabled) {
+transform: translateY(1px) scale(0.97);
+transition-duration: 80ms;
+}
+
+/* -------------------------
+Disabled
+------------------------- */
+
+#sendButton:disabled {
+cursor: not-allowed;
+}
+
+/* =========================================================
+BUTTON CONTENT
+========================================================= */
+
+.send-content,
+.loading-content,
+.success-content,
+.error-content {
+display: inline-flex;
+align-items: center;
+justify-content: center;
+gap: 7px;
+
+/*
+The content is animated with opacity + transform
+instead of display:none.
+*/
+transition:
+opacity 180ms ease,
+transform 220ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+/* Default */
+
+.loading-content,
+.success-content,
+.error-content {
+position: absolute;
+opacity: 0;
+pointer-events: none;
+transform: translateY(8px) scale(0.96);
+}
+
+/* =========================================================
+LOADING STATE
+Add .is-loading to #sendButton
+========================================================= */
+
+#sendButton.is-loading {
+cursor: wait;
+background: #262626;
+min-width: 110px;
+}
+
+#sendButton.is-loading .send-content {
+opacity: 0;
+transform: translateY(-8px) scale(0.96);
+}
+
+#sendButton.is-loading .loading-content {
+opacity: 1;
+transform: translateY(0) scale(1);
+}
+
+/* Spinner */
+
+.spinner {
+width: 15px;
+height: 15px;
+border: 2px solid rgba(255, 255, 255, 0.3);
+border-top-color: #ffffff;
+border-radius: 50%;
+
+animation: spinnerRotate 700ms linear infinite;
+}
+
+@keyframes spinnerRotate {
+to {
+transform: rotate(360deg);
+}
+}
+
+/* =========================================================
+SUCCESS STATE
+Add .is-success to #sendButton
+========================================================= */
+
+#sendButton.is-success {
+background: #16803c;
+min-width: 110px;
+cursor: default;
+}
+
+#sendButton.is-success .send-content,
+#sendButton.is-success .loading-content,
+#sendButton.is-success .error-content {
+opacity: 0;
+transform: scale(0.9);
+}
+
+#sendButton.is-success .success-content {
+opacity: 1;
+transform: translateY(0) scale(1);
+}
+
+/* Success check */
+
+.success-icon {
+width: 16px;
+height: 16px;
+display: block;
+stroke: currentColor;
+stroke-width: 2.5;
+stroke-linecap: round;
+stroke-linejoin: round;
+
+animation: successPop 300ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+@keyframes successPop {
+0% {
+opacity: 0;
+transform: scale(0.5);
+}
+
+70% {
+transform: scale(1.15);
+}
+
+100% {
+opacity: 1;
+transform: scale(1);
+}
+}
+
+/* =========================================================
+ERROR STATE
+Add .is-error to #sendButton
+========================================================= */
+
+#sendButton.is-error {
+background: #c62828;
+min-width: 110px;
+}
+
+#sendButton.is-error .send-content,
+#sendButton.is-error .loading-content,
+#sendButton.is-error .success-content {
+opacity: 0;
+transform: scale(0.9);
+}
+
+#sendButton.is-error .error-content {
+opacity: 1;
+transform: translateY(0) scale(1);
+}
+
+/* Error shake */
+
+#sendButton.shake {
+animation: buttonShake 360ms ease-in-out;
+}
+
+@keyframes buttonShake {
+0%,
+100% {
+transform: translateX(0);
+}
+
+20% {
+transform: translateX(-5px);
+}
+
+40% {
+transform: translateX(5px);
+}
+
+60% {
+transform: translateX(-4px);
+}
+
+80% {
+transform: translateX(3px);
+}
+}
+
+/* Error icon */
+
+.error-icon {
+width: 16px;
+height: 16px;
+display: block;
+}
+
+/* =========================================================
+STOP BUTTON
+========================================================= */
+
+#stopButton {
+background: #ef4444;
+color: #ffffff;
+}
+
+#stopButton:hover {
+opacity: 0.85;
+transform: translateY(-1px);
+}
+
+#stopButton:active {
+transform: translateY(1px) scale(0.97);
+}
+
+/* =========================================================
+REDUCED MOTION
+========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+#sendButton,
+#stopButton,
+.send-content,
+.loading-content,
+.success-content,
+.error-content {
+transition-duration: 1ms !important;
+animation-duration: 1ms !important;
+}
+
+.spinner {
+animation: none;
+}
+
+#sendButton:hover:not(:disabled),
+#stopButton:hover {
+transform: none;
+}
+
+#sendButton:active:not(:disabled),
+#stopButton:active {
+transform: scale(0.98);
+}
+}
+
+/* =========================================================
+MOBILE
+========================================================= */
+
+@media (max-width: 600px) {
+.header {
+height: 54px;
+padding: 0 16px;
+}
+
+#messages {
+padding: 24px 12px 130px;
+}
+
+.bubble {
+max-width: 88%;
+}
+
+.composer-wrap {
+padding: 10px 10px 14px;
+}
+
+.composer {
+border-radius: 16px;
 }
 
 #sendButton,
 #stopButton {
-  min-width: 64px;
-  height: 40px;
-  padding: 0 14px;
-  border: none;
-  border-radius: 12px;
-  cursor: pointer;
-  font-size: 14px;
-  font-weight: 600;
+min-width: 56px;
+padding: 0 10px;
 }
 
-#sendButton {
-  background: #171717;
-  color: #ffffff;
+#sendButton.is-loading,
+#sendButton.is-success,
+#sendButton.is-error {
+min-width: 100px;
 }
 
-#stopButton {
-  background: #ef4444;
-  color: #ffffff;
+.welcome h1 {
+font-size: 36px;
 }
 
-#sendButton:hover,
-#stopButton:hover {
-  opacity: 0.85;
+.welcome p {
+font-size: 14px;
 }
-
-#sendButton:active,
-#stopButton:active {
-  transform: scale(0.97);
-}
-
-/* Mobile */
-
-@media (max-width: 600px) {
-  .header {
-    height: 54px;
-    padding: 0 16px;
-  }
-
-  #messages {
-    padding: 24px 12px 130px;
-  }
-
-  .bubble {
-    max-width: 88%;
-  }
-
-  .composer-wrap {
-    padding: 10px 10px 14px;
-  }
-
-  .composer {
-    border-radius: 16px;
-  }
-
-  #sendButton,
-  #stopButton {
-    min-width: 56px;
-    padding: 0 10px;
-  }
-
-  .welcome h1 {
-    font-size: 36px;
-  }
-
-  .welcome p {
-    font-size: 14px;
-  }
 }
