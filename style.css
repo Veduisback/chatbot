@@ -1,3 +1,7 @@
+/* =========================================================
+   RESET
+   ========================================================= */
+
 * {
   box-sizing: border-box;
 }
@@ -6,6 +10,7 @@ html,
 body {
   margin: 0;
   padding: 0;
+
   width: 100%;
   height: 100%;
 
@@ -17,37 +22,78 @@ body {
     "Segoe UI",
     sans-serif;
 
-  background: #ffffff;
+  background: #f7f7f8;
   color: #171717;
 }
+
+
+/* =========================================================
+   BODY
+   ========================================================= */
 
 body {
   overflow: hidden;
 }
 
-button,
-textarea {
-  font: inherit;
+
+/* =========================================================
+   3D BACKGROUND
+   ========================================================= */
+
+#three-bg {
+  position: fixed;
+
+  inset: 0;
+
+  width: 100%;
+  height: 100%;
+
+  z-index: 0;
+
+  pointer-events: none;
+
+  display: block;
 }
 
-button {
-  -webkit-tap-highlight-color: transparent;
-}
+
+/* =========================================================
+   APPLICATION
+   ========================================================= */
 
 .app {
+  position: relative;
+
+  z-index: 1;
+
+  width: 100%;
   height: 100vh;
 
   display: flex;
   flex-direction: column;
+
+  pointer-events: none;
+}
+
+
+/*
+ * Everything interactive inside the app
+ * must remain clickable.
+ */
+
+.header,
+#messages,
+.composer-wrap {
+  pointer-events: auto;
 }
 
 
 /* =========================================================
    HEADER
-========================================================= */
+   ========================================================= */
 
 .header {
   height: 60px;
+
   flex-shrink: 0;
 
   display: flex;
@@ -56,65 +102,98 @@ button {
 
   padding: 0 24px;
 
-  border-bottom: 1px solid #e5e5e5;
+  background: rgba(255, 255, 255, 0.42);
 
-  background: #ffffff;
+  border-bottom:
+    1px solid rgba(0, 0, 0, 0.08);
+
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
 }
+
 
 .brand {
   font-size: 17px;
+
   font-weight: 650;
+
+  letter-spacing: -0.2px;
 }
+
 
 .status {
   font-size: 13px;
-  color: #737373;
+
+  color: #666;
+
+  transition:
+    color 220ms ease,
+    opacity 220ms ease;
 }
 
 
 /* =========================================================
    MESSAGES
-========================================================= */
+   ========================================================= */
 
 #messages {
   flex: 1;
 
   overflow-y: auto;
 
-  padding: 32px 20px 150px;
+  padding:
+    32px
+    20px
+    160px;
 
   scroll-behavior: smooth;
+
+  scrollbar-width: thin;
 }
 
+
+/* =========================================================
+   WELCOME
+   ========================================================= */
+
 .welcome {
-  min-height: 60%;
+  min-height: 65%;
 
   display: flex;
+
   align-items: center;
+
   justify-content: center;
 
   text-align: center;
 }
 
+
 .welcome-inner {
-  width: 100%;
-  max-width: 600px;
+  max-width: 620px;
+
+  padding: 30px;
 }
+
 
 .welcome h1 {
-  margin: 0 0 12px;
+  margin: 0 0 14px;
 
-  font-size: clamp(32px, 6vw, 52px);
+  font-size:
+    clamp(36px, 7vw, 58px);
 
-  letter-spacing: -1.5px;
+  line-height: 1.05;
+
+  letter-spacing: -2px;
 }
+
 
 .welcome p {
   margin: 0;
 
   line-height: 1.6;
 
-  color: #737373;
+  color: #666;
 
   font-size: 15px;
 }
@@ -122,52 +201,73 @@ button {
 
 /* =========================================================
    DEMO INFO
-========================================================= */
+   ========================================================= */
 
 .demo-info {
-  margin-top: 28px;
+  margin-top: 24px;
 
   display: flex;
-  flex-direction: column;
 
-  gap: 6px;
+  justify-content: center;
+
+  flex-wrap: wrap;
+
+  gap: 8px 14px;
 
   font-size: 12px;
 
-  color: #a3a3a3;
+  color: #737373;
 }
 
-.demo-info span:first-child {
-  color: #525252;
-  font-weight: 600;
+
+.demo-info span {
+  padding:
+    6px 10px;
+
+  border-radius: 999px;
+
+  background:
+    rgba(255, 255, 255, 0.45);
+
+  border:
+    1px solid rgba(0, 0, 0, 0.08);
+
+  backdrop-filter: blur(8px);
 }
 
 
 /* =========================================================
    CHAT MESSAGES
-========================================================= */
+   ========================================================= */
 
 .message {
   width: 100%;
+
   max-width: 800px;
 
-  margin: 0 auto 20px;
+  margin:
+    0 auto 20px;
 
   display: flex;
 }
+
 
 .message.user {
   justify-content: flex-end;
 }
 
+
 .message.assistant {
   justify-content: flex-start;
 }
 
-.bubble {
-  max-width: min(75%, 650px);
 
-  padding: 12px 16px;
+.bubble {
+  max-width:
+    min(75%, 650px);
+
+  padding:
+    12px 16px;
 
   border-radius: 16px;
 
@@ -176,32 +276,51 @@ button {
   white-space: pre-wrap;
 
   overflow-wrap: anywhere;
+
+  backdrop-filter: blur(10px);
+
+  -webkit-backdrop-filter: blur(10px);
 }
 
+
 .message.user .bubble {
-  background: #171717;
-  color: #ffffff;
+  background:
+    rgba(23, 23, 23, 0.88);
+
+  color: #fff;
 
   border-bottom-right-radius: 5px;
 }
 
+
 .message.assistant .bubble {
-  background: #f3f3f3;
+  background:
+    rgba(243, 243, 243, 0.72);
+
   color: #171717;
+
+  border:
+    1px solid rgba(0, 0, 0, 0.06);
 
   border-bottom-left-radius: 5px;
 }
 
+
 .message.assistant .bubble.streaming:empty::after {
   content: "▌";
 
-  animation: blink 0.8s infinite;
+  animation:
+    blink 0.8s infinite;
 }
+
 
 .message.assistant .bubble.error {
   color: #b42318;
-  background: #fff1f0;
+
+  background:
+    rgba(255, 241, 240, 0.88);
 }
+
 
 @keyframes blink {
   50% {
@@ -211,8 +330,8 @@ button {
 
 
 /* =========================================================
-   COMPOSER
-========================================================= */
+   COMPOSER AREA
+   ========================================================= */
 
 .composer-wrap {
   position: fixed;
@@ -221,56 +340,94 @@ button {
   right: 0;
   bottom: 0;
 
-  padding: 16px 20px 20px;
+  padding:
+    16px
+    20px
+    20px;
 
   background:
     linear-gradient(
       to top,
-      #ffffff 70%,
-      rgba(255, 255, 255, 0)
+      rgba(247, 247, 248, 0.88) 15%,
+      rgba(247, 247, 248, 0.45) 60%,
+      rgba(247, 247, 248, 0) 100%
     );
+
+  z-index: 5;
 }
+
+
+/* =========================================================
+   COMPOSER
+   ========================================================= */
 
 .composer {
   width: 100%;
+
   max-width: 800px;
 
   margin: 0 auto;
 
   display: flex;
+
   align-items: flex-end;
 
   gap: 8px;
 
   padding: 8px;
 
-  border: 1px solid #d4d4d4;
+  border:
+    1px solid rgba(0, 0, 0, 0.12);
 
   border-radius: 18px;
 
-  background: #ffffff;
+  background:
+    rgba(255, 255, 255, 0.48);
 
   box-shadow:
-    0 4px 20px rgba(0, 0, 0, 0.06);
+    0 12px 40px
+    rgba(0, 0, 0, 0.10);
+
+  backdrop-filter: blur(16px);
+
+  -webkit-backdrop-filter: blur(16px);
+
+  transition:
+    border-color 200ms ease,
+    box-shadow 200ms ease;
+}
+
+
+.composer:focus-within {
+  border-color:
+    rgba(23, 23, 23, 0.25);
+
+  box-shadow:
+    0 14px 44px
+    rgba(0, 0, 0, 0.13);
 }
 
 
 /* =========================================================
-   INPUT
-========================================================= */
+   TEXT INPUT
+   ========================================================= */
 
 #messageInput {
   flex: 1;
 
   min-height: 42px;
+
   max-height: 180px;
 
   resize: none;
 
   border: none;
+
   outline: none;
 
-  padding: 11px 10px;
+  padding:
+    11px
+    10px;
 
   line-height: 20px;
 
@@ -279,71 +436,98 @@ button {
   color: #171717;
 }
 
+
 #messageInput::placeholder {
-  color: #a3a3a3;
+  color: #888;
 }
+
 
 #messageInput:disabled {
   opacity: 0.6;
+
+  cursor: not-allowed;
 }
 
 
 /* =========================================================
-   SEND BUTTON
-========================================================= */
+   SEND + STOP BUTTONS
+   ========================================================= */
 
-#sendButton {
+#sendButton,
+#stopButton {
   position: relative;
 
-  min-width: 64px;
+  min-width: 70px;
+
   height: 40px;
 
-  padding: 0 16px;
+  padding:
+    0 16px;
 
   border: none;
+
   border-radius: 12px;
 
   cursor: pointer;
 
-  background: #171717;
-  color: #ffffff;
-
   font-size: 14px;
+
   font-weight: 600;
 
   display: inline-flex;
 
   align-items: center;
+
   justify-content: center;
+
+  gap: 8px;
 
   overflow: hidden;
 
-  transform-origin: center;
-
-  will-change:
-    transform,
-    width,
-    background-color;
+  transition:
+    transform 180ms cubic-bezier(0.2, 0.8, 0.2, 1),
+    opacity 180ms ease,
+    background-color 220ms ease,
+    box-shadow 220ms ease,
+    color 220ms ease;
 }
 
 
-/* Hover */
+#sendButton {
+  background: #171717;
+
+  color: #fff;
+}
+
 
 #sendButton:hover:not(:disabled) {
+  transform:
+    translateY(-1px);
+
   box-shadow:
-    0 6px 18px rgba(0, 0, 0, 0.15);
+    0 5px 14px
+    rgba(0, 0, 0, 0.18);
 }
 
 
-/* Keyboard focus */
+#sendButton:focus-visible,
+#stopButton:focus-visible,
+.demo-controls button:focus-visible {
+  outline:
+    3px solid
+    rgba(23, 23, 23, 0.3);
 
-#sendButton:focus-visible {
-  outline: 3px solid rgba(23, 23, 23, 0.3);
   outline-offset: 3px;
 }
 
 
-/* Disabled */
+#sendButton:active:not(:disabled),
+#stopButton:active {
+  transform:
+    translateY(1px)
+    scale(0.97);
+}
+
 
 #sendButton:disabled {
   cursor: not-allowed;
@@ -352,55 +536,62 @@ button {
 
 /* =========================================================
    BUTTON CONTENT
-========================================================= */
+   ========================================================= */
 
-.button-state {
-  position: absolute;
-
-  inset: 0;
-
+.send-content,
+.loading-content,
+.success-content,
+.error-content {
   display: inline-flex;
 
   align-items: center;
+
   justify-content: center;
 
   gap: 7px;
 
-  opacity: 0;
-
-  transform:
-    translateY(10px)
-    scale(0.92);
-
-  pointer-events: none;
+  transition:
+    opacity 180ms ease,
+    transform 220ms cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
-.send-content {
-  position: relative;
 
-  opacity: 1;
+.loading-content,
+.success-content,
+.error-content {
+  position: absolute;
+
+  opacity: 0;
+
+  pointer-events: none;
 
   transform:
-    translateY(0)
-    scale(1);
+    translateY(8px)
+    scale(0.96);
 }
 
 
 /* =========================================================
    LOADING
-========================================================= */
+   ========================================================= */
 
 #sendButton.is-loading {
-  min-width: 112px;
+  cursor: wait;
 
   background: #262626;
 
-  cursor: wait;
+  min-width: 110px;
 }
+
 
 #sendButton.is-loading .send-content {
   opacity: 0;
+
+  transform:
+    translateY(-8px)
+    scale(0.96);
 }
+
 
 #sendButton.is-loading .loading-content {
   opacity: 1;
@@ -410,19 +601,24 @@ button {
     scale(1);
 }
 
+
 .spinner {
   width: 15px;
+
   height: 15px;
 
-  border: 2px solid rgba(255, 255, 255, 0.3);
+  border:
+    2px solid
+    rgba(255, 255, 255, 0.3);
 
-  border-top-color: #ffffff;
+  border-top-color: #fff;
 
   border-radius: 50%;
 
   animation:
     spinnerRotate 700ms linear infinite;
 }
+
 
 @keyframes spinnerRotate {
   to {
@@ -433,21 +629,26 @@ button {
 
 /* =========================================================
    SUCCESS
-========================================================= */
+   ========================================================= */
 
 #sendButton.is-success {
-  min-width: 105px;
-
   background: #16803c;
+
+  min-width: 110px;
 
   cursor: default;
 }
+
 
 #sendButton.is-success .send-content,
 #sendButton.is-success .loading-content,
 #sendButton.is-success .error-content {
   opacity: 0;
+
+  transform:
+    scale(0.9);
 }
+
 
 #sendButton.is-success .success-content {
   opacity: 1;
@@ -457,9 +658,11 @@ button {
     scale(1);
 }
 
+
 .success-icon {
-  width: 17px;
-  height: 17px;
+  width: 16px;
+
+  height: 16px;
 
   display: block;
 
@@ -468,25 +671,58 @@ button {
   stroke-width: 2.5;
 
   stroke-linecap: round;
+
   stroke-linejoin: round;
+
+  animation:
+    successPop
+    300ms
+    cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+
+@keyframes successPop {
+  0% {
+    opacity: 0;
+
+    transform:
+      scale(0.5);
+  }
+
+  70% {
+    transform:
+      scale(1.15);
+  }
+
+  100% {
+    opacity: 1;
+
+    transform:
+      scale(1);
+  }
 }
 
 
 /* =========================================================
    ERROR
-========================================================= */
+   ========================================================= */
 
 #sendButton.is-error {
-  min-width: 105px;
-
   background: #c62828;
+
+  min-width: 110px;
 }
+
 
 #sendButton.is-error .send-content,
 #sendButton.is-error .loading-content,
 #sendButton.is-error .success-content {
   opacity: 0;
+
+  transform:
+    scale(0.9);
 }
+
 
 #sendButton.is-error .error-content {
   opacity: 1;
@@ -496,9 +732,48 @@ button {
     scale(1);
 }
 
+
+#sendButton.shake {
+  animation:
+    buttonShake
+    360ms
+    ease-in-out;
+}
+
+
+@keyframes buttonShake {
+  0%,
+  100% {
+    transform:
+      translateX(0);
+  }
+
+  20% {
+    transform:
+      translateX(-5px);
+  }
+
+  40% {
+    transform:
+      translateX(5px);
+  }
+
+  60% {
+    transform:
+      translateX(-4px);
+  }
+
+  80% {
+    transform:
+      translateX(3px);
+  }
+}
+
+
 .error-icon {
-  width: 17px;
-  height: 17px;
+  width: 16px;
+
+  height: 16px;
 
   display: block;
 }
@@ -506,47 +781,34 @@ button {
 
 /* =========================================================
    STOP BUTTON
-========================================================= */
+   ========================================================= */
 
-.stop-button {
-  min-width: 64px;
-  height: 40px;
-
-  padding: 0 14px;
-
-  border: none;
-
-  border-radius: 12px;
-
-  cursor: pointer;
-
+#stopButton {
   background: #ef4444;
 
-  color: #ffffff;
-
-  font-size: 14px;
-  font-weight: 600;
+  color: #fff;
 }
 
-.stop-button:hover {
-  opacity: 0.85;
-}
 
-.stop-button:focus-visible {
-  outline: 3px solid rgba(239, 68, 68, 0.3);
-  outline-offset: 3px;
+#stopButton:hover {
+  opacity: 0.88;
+
+  transform:
+    translateY(-1px);
 }
 
 
 /* =========================================================
    DEMO CONTROLS
-========================================================= */
+   ========================================================= */
 
 .demo-controls {
   width: 100%;
+
   max-width: 800px;
 
-  margin: 10px auto 0;
+  margin:
+    10px auto 0;
 
   display: flex;
 
@@ -555,76 +817,99 @@ button {
   gap: 8px;
 }
 
+
 .demo-controls button {
-  border: 1px solid #d4d4d4;
+  border:
+    1px solid
+    rgba(0, 0, 0, 0.1);
 
-  background: #ffffff;
+  background:
+    rgba(255, 255, 255, 0.45);
 
-  color: #525252;
+  color: #555;
 
-  padding: 7px 11px;
+  border-radius: 999px;
 
-  border-radius: 9px;
+  padding:
+    6px 11px;
 
-  font-size: 12px;
+  font-size: 11px;
 
   cursor: pointer;
 
+  backdrop-filter: blur(8px);
+
+  -webkit-backdrop-filter: blur(8px);
+
   transition:
-    background-color 160ms ease,
-    color 160ms ease,
-    border-color 160ms ease;
+    background 180ms ease,
+    transform 180ms ease;
 }
+
 
 .demo-controls button:hover {
-  background: #f5f5f5;
-  border-color: #b5b5b5;
-}
+  background:
+    rgba(255, 255, 255, 0.75);
 
-.demo-controls button:focus-visible {
-  outline: 2px solid #171717;
-  outline-offset: 2px;
+  transform:
+    translateY(-1px);
 }
 
 
 /* =========================================================
    REDUCED MOTION
-========================================================= */
+   ========================================================= */
 
 @media (prefers-reduced-motion: reduce) {
 
-  *,
-  *::before,
-  *::after {
-    animation-duration: 1ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 1ms !important;
+  #sendButton,
+  #stopButton,
+  .send-content,
+  .loading-content,
+  .success-content,
+  .error-content {
+    transition-duration:
+      1ms !important;
+
+    animation-duration:
+      1ms !important;
   }
 
   .spinner {
     animation: none;
   }
 
+  #sendButton:hover:not(:disabled),
+  #stopButton:hover {
+    transform: none;
+  }
+
+  #sendButton:active:not(:disabled),
+  #stopButton:active {
+    transform:
+      scale(0.98);
+  }
 }
 
 
 /* =========================================================
    MOBILE
-========================================================= */
+   ========================================================= */
 
 @media (max-width: 600px) {
 
   .header {
     height: 54px;
 
-    padding: 0 16px;
+    padding:
+      0 16px;
   }
 
   #messages {
     padding:
       24px
       12px
-      150px;
+      145px;
   }
 
   .bubble {
@@ -640,10 +925,13 @@ button {
 
   .composer {
     border-radius: 16px;
+
+    padding: 7px;
   }
 
-  #sendButton {
-    min-width: 56px;
+  #sendButton,
+  #stopButton {
+    min-width: 58px;
 
     padding:
       0 10px;
@@ -655,15 +943,16 @@ button {
     min-width: 100px;
   }
 
-  .stop-button {
-    min-width: 56px;
-
+  .welcome-inner {
     padding:
-      0 10px;
+      20px;
   }
 
   .welcome h1 {
     font-size: 36px;
+
+    letter-spacing:
+      -1.2px;
   }
 
   .welcome p {
@@ -671,7 +960,10 @@ button {
   }
 
   .demo-info {
-    margin-top: 22px;
+    display: none;
   }
 
+  .demo-controls button {
+    font-size: 10px;
+  }
 }
