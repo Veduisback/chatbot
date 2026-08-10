@@ -1,11 +1,22 @@
+const API_URL =
+  "https://chatbot-eqq8.onrender.com";
 
-const API_URL = "https://chatbot-eqq8.onrender.com";
 
-const chatForm = document.getElementById("chatForm");
-const messageInput = document.getElementById("messageInput");
+/* =========================================================
+   ELEMENTS
+========================================================= */
 
-const sendButton = document.getElementById("sendButton");
-const stopButton = document.getElementById("stopButton");
+const chatForm =
+  document.getElementById("chatForm");
+
+const messageInput =
+  document.getElementById("messageInput");
+
+const sendButton =
+  document.getElementById("sendButton");
+
+const stopButton =
+  document.getElementById("stopButton");
 
 const messagesContainer =
   document.getElementById("messages");
@@ -22,165 +33,32 @@ const demoSuccess =
 const demoError =
   document.getElementById("demoError");
 
-let conversation = [];
-let controller = null;
-let isGenerating = false;
-let lifecycleTimer = null;
-let lastSubmittedText = "";
 
 /* =========================================================
-   ANIME.JS INTRO ANIMATION
+   STATE
 ========================================================= */
 
-function playIntroAnimation() {
+let conversation = [];
 
-  if (
-    typeof anime === "undefined"
-  ) {
-    console.warn(
-      "Anime.js was not loaded."
-    );
+let controller = null;
 
-    return;
-  }
+let isGenerating = false;
 
-  anime({
-    targets: ".logo-dot",
+let lifecycleTimer = null;
 
-    translateY: [
-      {
-        value: -12,
-        duration: 400
-      },
-      {
-        value: 0,
-        duration: 500
-      }
-    ],
-
-    scale: [
-      {
-        value: 0.6,
-        duration: 0
-      },
-      {
-        value: 1.2,
-        duration: 400
-      },
-      {
-        value: 1,
-        duration: 500
-      }
-    ],
-
-    opacity: [
-      {
-        value: 0,
-        duration: 0
-      },
-      {
-        value: 1,
-        duration: 400
-      }
-    ],
-
-    delay: anime.stagger(120),
-
-    easing: "easeOutElastic(1, .6)"
-  });
+let lastSubmittedText = "";
 
 
-  anime({
-    targets: ".welcome h1",
+/* =========================================================
+   CHECK ANIME.JS
+========================================================= */
 
-    opacity: [
-      {
-        value: 0,
-        duration: 0
-      },
-      {
-        value: 1,
-        duration: 700
-      }
-    ],
+if (typeof anime === "undefined") {
 
-    translateY: [
-      {
-        value: 20,
-        duration: 0
-      },
-      {
-        value: 0,
-        duration: 700
-      }
-    ],
+  console.error(
+    "Anime.js failed to load."
+  );
 
-    delay: 450,
-
-    easing: "easeOutCubic"
-  });
-
-
-  anime({
-    targets: ".welcome p",
-
-    opacity: [
-      {
-        value: 0,
-        duration: 0
-      },
-      {
-        value: 1,
-        duration: 600
-      }
-    ],
-
-    translateY: [
-      {
-        value: 12,
-        duration: 0
-      },
-      {
-        value: 0,
-        duration: 600
-      }
-    ],
-
-    delay: 650,
-
-    easing: "easeOutCubic"
-  });
-
-
-  anime({
-    targets: ".demo-info",
-
-    opacity: [
-      {
-        value: 0,
-        duration: 0
-      },
-      {
-        value: 1,
-        duration: 600
-      }
-    ],
-
-    translateY: [
-      {
-        value: 10,
-        duration: 0
-      },
-      {
-        value: 0,
-        duration: 600
-      }
-    ],
-
-    delay: 800,
-
-    easing: "easeOutCubic"
-  });
 }
 
 
@@ -212,40 +90,22 @@ function addMessage(
   bubble.textContent =
     content;
 
-  wrapper.appendChild(bubble);
+  if (role === "assistant") {
+
+    bubble.setAttribute(
+      "aria-live",
+      "polite"
+    );
+
+  }
+
+  wrapper.appendChild(
+    bubble
+  );
 
   messagesContainer.appendChild(
     wrapper
   );
-
-  /*
-   * Animate newly created messages
-   * using Anime.js.
-   */
-
-  if (
-    typeof anime !== "undefined"
-  ) {
-
-    anime({
-      targets: wrapper,
-
-      opacity: [
-        0,
-        1
-      ],
-
-      translateY: [
-        12,
-        0
-      ],
-
-      duration: 350,
-
-      easing: "easeOutCubic"
-    });
-
-  }
 
   scrollToBottom();
 
@@ -265,32 +125,116 @@ function scrollToBottom() {
 
 
 /* =========================================================
+   BUTTON CONTENT
+========================================================= */
+
+const buttonContents = {
+
+  idle:
+    sendButton.querySelector(
+      ".send-content"
+    ),
+
+  loading:
+    sendButton.querySelector(
+      ".loading-content"
+    ),
+
+  success:
+    sendButton.querySelector(
+      ".success-content"
+    ),
+
+  error:
+    sendButton.querySelector(
+      ".error-content"
+    )
+
+};
+
+
+/* =========================================================
+   ANIME HELPER
+========================================================= */
+
+function animate(targets, properties) {
+
+  if (
+    typeof anime === "undefined"
+  ) {
+    return;
+  }
+
+  anime.remove(targets);
+
+  return anime({
+    targets,
+    ...properties
+  });
+}
+
+
+/* =========================================================
    BUTTON STATE
 ========================================================= */
 
-function clearLifecycleStates() {
+function setButtonState(
+  state
+) {
+
+  clearTimeout(
+    lifecycleTimer
+  );
 
   sendButton.classList.remove(
     "is-loading",
     "is-success",
-    "is-error",
-    "shake"
+    "is-error"
   );
 
-  if (lifecycleTimer) {
 
-    clearTimeout(
-      lifecycleTimer
-    );
+  /* ---------------------------------------------
+     Reset content
+  --------------------------------------------- */
 
-    lifecycleTimer = null;
+  Object.values(
+    buttonContents
+  ).forEach(
+    (element) => {
+
+      element.style.opacity =
+        "0";
+
+      element.style.transform =
+        "translateY(10px) scale(0.92)";
+
+      element.setAttribute(
+        "aria-hidden",
+        "true"
+      );
+
+    }
+  );
+
+
+  const active =
+    buttonContents[state];
+
+
+  if (!active) {
+    return;
   }
-}
 
 
-function setButtonState(state) {
+  active.setAttribute(
+    "aria-hidden",
+    "false"
+  );
 
-  clearLifecycleStates();
+
+  /* ---------------------------------------------
+     State classes
+  --------------------------------------------- */
 
   if (state === "loading") {
 
@@ -298,14 +242,14 @@ function setButtonState(state) {
       "is-loading"
     );
 
-    sendButton.disabled = true;
+    sendButton.disabled =
+      true;
 
     sendButton.setAttribute(
       "aria-label",
       "Sending message"
     );
 
-    return;
   }
 
 
@@ -315,49 +259,168 @@ function setButtonState(state) {
       "is-success"
     );
 
-    sendButton.disabled = true;
+    sendButton.disabled =
+      true;
 
     sendButton.setAttribute(
       "aria-label",
       "Message sent"
     );
 
-    return;
   }
 
 
   if (state === "error") {
 
     sendButton.classList.add(
-      "is-error",
-      "shake"
+      "is-error"
     );
 
-    sendButton.disabled = false;
+    sendButton.disabled =
+      false;
 
     sendButton.setAttribute(
       "aria-label",
       "Retry sending message"
     );
 
-    setTimeout(() => {
+  }
 
-      sendButton.classList.remove(
-        "shake"
-      );
 
-    }, 380);
+  if (state === "idle") {
+
+    sendButton.disabled =
+      false;
+
+    sendButton.setAttribute(
+      "aria-label",
+      "Send message"
+    );
+
+  }
+
+
+  /* ---------------------------------------------
+     Animate active state
+  --------------------------------------------- */
+
+  const reducedMotion =
+    window.matchMedia(
+      "(prefers-reduced-motion: reduce)"
+    ).matches;
+
+
+  if (reducedMotion) {
+
+    active.style.opacity =
+      "1";
+
+    active.style.transform =
+      "translateY(0) scale(1)";
 
     return;
   }
 
 
-  sendButton.disabled = false;
+  animate(
+    active,
+    {
+      opacity: [0, 1],
 
-  sendButton.setAttribute(
-    "aria-label",
-    "Send message"
+      translateY: [
+        10,
+        0
+      ],
+
+      scale: [
+        0.92,
+        1
+      ],
+
+      duration: 320,
+
+      easing:
+        "easeOutCubic"
+    }
   );
+
+
+  /* ---------------------------------------------
+     Success icon animation
+  --------------------------------------------- */
+
+  if (
+    state === "success"
+  ) {
+
+    const icon =
+      active.querySelector(
+        ".success-icon"
+      );
+
+    if (icon) {
+
+      animate(
+        icon,
+        {
+          scale: [
+            0.4,
+            1.2,
+            1
+          ],
+
+          rotate: [
+            -12,
+            4,
+            0
+          ],
+
+          opacity: [
+            0,
+            1
+          ],
+
+          duration: 500,
+
+          easing:
+            "easeOutElastic(1, .6)"
+        }
+      );
+
+    }
+
+  }
+
+
+  /* ---------------------------------------------
+     Error shake
+  --------------------------------------------- */
+
+  if (
+    state === "error"
+  ) {
+
+    animate(
+      sendButton,
+      {
+        translateX: [
+          0,
+          -6,
+          6,
+          -4,
+          4,
+          0
+        ],
+
+        duration: 380,
+
+        easing:
+          "easeInOutSine"
+      }
+    );
+
+  }
+
 }
 
 
@@ -365,15 +428,19 @@ function setButtonState(state) {
    GENERATION STATE
 ========================================================= */
 
-function setGenerating(value) {
+function setGenerating(
+  value
+) {
 
-  isGenerating = value;
+  isGenerating =
+    value;
 
   messageInput.disabled =
     value;
 
   stopButton.hidden =
     !value;
+
 
   if (value) {
 
@@ -388,7 +455,9 @@ function setGenerating(value) {
 
     statusElement.textContent =
       "Ready";
+
   }
+
 }
 
 
@@ -406,50 +475,23 @@ function showSuccess() {
     "Sent";
 
 
-  /*
-   * Anime.js success animation.
-   */
-
-  if (
-    typeof anime !== "undefined"
-  ) {
-
-    anime({
-      targets:
-        ".success-icon",
-
-      scale: [
-        0.5,
-        1.2,
-        1
-      ],
-
-      opacity: [
-        0,
-        1
-      ],
-
-      duration: 450,
-
-      easing:
-        "easeOutBack"
-    });
-  }
-
-
   lifecycleTimer =
-    setTimeout(() => {
+    setTimeout(
+      () => {
 
-      setButtonState(
-        "idle"
-      );
+        setButtonState(
+          "idle"
+        );
 
-      statusElement.textContent =
-        "Ready";
+        statusElement.textContent =
+          "Ready";
 
-      messageInput.focus();
+        messageInput.focus();
 
-    }, 1100);
+      },
+      1200
+    );
+
 }
 
 
@@ -465,11 +507,12 @@ function showError() {
 
   statusElement.textContent =
     "Failed — retry";
+
 }
 
 
 /* =========================================================
-   TEXTAREA
+   INPUT HEIGHT
 ========================================================= */
 
 function setInputHeight() {
@@ -484,6 +527,10 @@ function setInputHeight() {
     ) + "px";
 }
 
+
+/* =========================================================
+   INPUT
+========================================================= */
 
 messageInput.addEventListener(
   "input",
@@ -509,8 +556,11 @@ messageInput.addEventListener(
       if (!isGenerating) {
 
         chatForm.requestSubmit();
+
       }
+
     }
+
   }
 );
 
@@ -525,6 +575,7 @@ chatForm.addEventListener(
 
     event.preventDefault();
 
+
     if (isGenerating) {
       return;
     }
@@ -533,6 +584,8 @@ chatForm.addEventListener(
     let text =
       messageInput.value.trim();
 
+
+    /* Retry */
 
     if (
       sendButton.classList.contains(
@@ -543,6 +596,7 @@ chatForm.addEventListener(
       text =
         lastSubmittedText ||
         text;
+
     }
 
 
@@ -551,12 +605,12 @@ chatForm.addEventListener(
     }
 
 
-    clearLifecycleStates();
-
     lastSubmittedText =
       text;
 
-    messageInput.value = "";
+
+    messageInput.value =
+      "";
 
     setInputHeight();
 
@@ -589,10 +643,13 @@ chatForm.addEventListener(
       new AbortController();
 
 
-    setGenerating(true);
+    setGenerating(
+      true
+    );
 
 
-    let assistantText = "";
+    let assistantText =
+      "";
 
 
     try {
@@ -635,12 +692,15 @@ chatForm.addEventListener(
             errorMessage;
 
         } catch {
-          // Ignore
+
+          /* Ignore */
+
         }
 
         throw new Error(
           errorMessage
         );
+
       }
 
 
@@ -649,6 +709,7 @@ chatForm.addEventListener(
         throw new Error(
           "Streaming is not supported."
         );
+
       }
 
 
@@ -658,7 +719,8 @@ chatForm.addEventListener(
       const decoder =
         new TextDecoder();
 
-      let buffer = "";
+      let buffer =
+        "";
 
 
       while (true) {
@@ -752,6 +814,7 @@ chatForm.addEventListener(
                   parsed.error ||
                   "Generation failed."
                 );
+
               }
 
 
@@ -766,20 +829,35 @@ chatForm.addEventListener(
                   assistantText;
 
                 scrollToBottom();
+
               }
 
-            } catch (error) {
+            } catch (
+              parseError
+            ) {
+
+              /*
+               * Ignore malformed
+               * JSON chunks.
+               */
 
               if (
-                error.message !==
-                "Unexpected token"
+                parseError.message &&
+                !parseError.message.includes(
+                  "Unexpected token"
+                )
               ) {
 
-                throw error;
+                throw parseError;
+
               }
+
             }
+
           }
+
         }
+
       }
 
 
@@ -797,7 +875,14 @@ chatForm.addEventListener(
 
       showSuccess();
 
-    } catch (error) {
+    }
+
+
+    catch (error) {
+
+      /* -----------------------------------------
+         User stopped generation
+      ----------------------------------------- */
 
       if (
         error.name ===
@@ -815,6 +900,7 @@ chatForm.addEventListener(
 
           assistantBubble.textContent =
             "Generation stopped.";
+
         }
 
 
@@ -823,12 +909,21 @@ chatForm.addEventListener(
         );
 
 
-        clearLifecycleStates();
+        setButtonState(
+          "idle"
+        );
 
         statusElement.textContent =
           "Stopped";
 
-      } else {
+      }
+
+
+      /* -----------------------------------------
+         Normal error
+      ----------------------------------------- */
+
+      else {
 
         assistantBubble.classList.add(
           "error"
@@ -838,22 +933,27 @@ chatForm.addEventListener(
           error.message ||
           "Failed to generate a response.";
 
-
         assistantBubble.classList.remove(
           "streaming"
         );
 
-
         showError();
+
       }
 
-    } finally {
+    }
 
-      controller = null;
+
+    finally {
+
+      controller =
+        null;
+
+      isGenerating =
+        false;
 
       messageInput.disabled =
-        isGenerating =
-          false;
+        false;
 
       stopButton.hidden =
         true;
@@ -871,16 +971,19 @@ chatForm.addEventListener(
         setButtonState(
           "idle"
         );
+
       }
 
       messageInput.focus();
+
     }
+
   }
 );
 
 
 /* =========================================================
-   STOP
+   STOP BUTTON
 ========================================================= */
 
 stopButton.addEventListener(
@@ -890,7 +993,9 @@ stopButton.addEventListener(
     if (controller) {
 
       controller.abort();
+
     }
+
   }
 );
 
@@ -907,24 +1012,37 @@ demoSuccess.addEventListener(
       return;
     }
 
-    setGenerating(true);
+
+    setGenerating(
+      true
+    );
+
 
     statusElement.textContent =
       "Demo: loading...";
 
 
+    const delay =
+      700 +
+      Math.random() * 900;
+
+
     await new Promise(
-      resolve =>
+      (resolve) =>
         setTimeout(
           resolve,
-          1000
+          delay
         )
     );
 
 
-    setGenerating(false);
+    setGenerating(
+      false
+    );
+
 
     showSuccess();
+
   }
 );
 
@@ -941,33 +1059,44 @@ demoError.addEventListener(
       return;
     }
 
-    setGenerating(true);
+
+    setGenerating(
+      true
+    );
+
 
     statusElement.textContent =
       "Demo: loading...";
 
 
+    const delay =
+      700 +
+      Math.random() * 700;
+
+
     await new Promise(
-      resolve =>
+      (resolve) =>
         setTimeout(
           resolve,
-          900
+          delay
         )
     );
 
 
-    setGenerating(false);
+    setGenerating(
+      false
+    );
+
 
     showError();
+
   }
 );
 
 
 /* =========================================================
-   INITIALIZE
+   INITIAL STATE
 ========================================================= */
-
-setGenerating(false);
 
 setButtonState(
   "idle"
@@ -975,19 +1104,4 @@ setButtonState(
 
 setInputHeight();
 
-
-/*
- * Start Anime.js animation
- * after the page is ready.
- */
-
-window.addEventListener(
-  "load",
-  () => {
-
-    playIntroAnimation();
-
-    messageInput.focus();
-
-  }
-);
+messageInput.focus();
