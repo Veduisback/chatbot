@@ -1,4 +1,4 @@
-```javascript
+javascript
 const API_URL = "https://chatbot-eqq8.onrender.com";
 
 const chatForm = document.getElementById("chatForm");
@@ -563,4 +563,4 @@ demoError.addEventListener(
 setGenerating(false);
 setButtonState("idle");
 setInputHeight();
-```
+
