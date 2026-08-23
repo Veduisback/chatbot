@@ -151,7 +151,7 @@ app.post("/api/chat", async (req, res) => {
           messages: safeMessages,
           stream: true,
           temperature: 0.7,
-          max_tokens: 1000,
+          max_tokens: 500,
         }),
         signal: controller.signal,
       }
