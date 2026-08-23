@@ -15,7 +15,7 @@ CORS
 app.use((req, res, next) => {
   res.setHeader(
     "Access-Control-Allow-Origin",
-    "[https://veduisback.github.io](https://veduisback.github.io)"
+    "https://veduisback.github.io"
   );
 
   res.setHeader(
@@ -115,8 +115,6 @@ app.post("/api/chat", async (req, res) => {
 
   /* ---------------------------------
   Abort controller
-  Allows the OpenRouter request to
-  stop when the client disconnects.
   --------------------------------- */
 
   const controller = new AbortController();
@@ -137,19 +135,17 @@ app.post("/api/chat", async (req, res) => {
     --------------------------------- */
 
     const response = await fetch(
-      "[https://openrouter.ai/api/v1/chat/completions](https://openrouter.ai/api/v1/chat/completions)",
+      "https://openrouter.ai/api/v1/chat/completions",
       {
         method: "POST",
-
         headers: {
           Authorization: `Bearer ${OPENROUTER_API_KEY}`,
           "Content-Type": "application/json",
           "HTTP-Referer":
             process.env.SITE_URL ||
-            "[https://veduisback.github.io/chatbot/](https://veduisback.github.io/chatbot/)",
+            "https://veduisback.github.io/chatbot/",
           "X-Title": process.env.SITE_NAME || "AI Chat",
         },
-
         body: JSON.stringify({
           model: MODEL,
           messages: safeMessages,
@@ -157,7 +153,6 @@ app.post("/api/chat", async (req, res) => {
           temperature: 0.7,
           max_tokens: 1000,
         }),
-
         signal: controller.signal,
       }
     );
@@ -198,4 +193,127 @@ app.post("/api/chat", async (req, res) => {
 
     res.status(200);
 
-    res
+    res.setHeader(
+      "Content-Type",
+      "text/event-stream; charset=utf-8"
+    );
+
+    res.setHeader(
+      "Cache-Control",
+      "no-cache, no-transform"
+    );
+
+    res.setHeader("Connection", "keep-alive");
+
+    res.setHeader("X-Accel-Buffering", "no");
+
+    if (typeof res.flushHeaders === "function") {
+      res.flushHeaders();
+    }
+
+    /* ---------------------------------
+    Stream reader
+    --------------------------------- */
+
+    const reader = response.body.getReader();
+    const decoder = new TextDecoder();
+    let buffer = "";
+
+    try {
+      while (true) {
+        const { value, done } = await reader.read();
+
+        if (done) {
+          break;
+        }
+
+        buffer += decoder.decode(value, { stream: true });
+        buffer = buffer.replace(/\r\n/g, "\n");
+
+        const events = buffer.split("\n\n");
+        buffer = events.pop() || "";
+
+        for (const event of events) {
+          const lines = event.split("\n");
+
+          for (const line of lines) {
+            if (!line.startsWith("data:")) {
+              continue;
+            }
+
+            const data = line.slice(5).trim();
+
+            if (!data || data === "[DONE]") {
+              continue;
+            }
+
+            try {
+              const parsed = JSON.parse(data);
+              const content =
+                parsed.choices?.[0]?.delta?.content;
+
+              if (content) {
+                res.write(
+                  `data: ${JSON.stringify({
+                    content,
+                  })}\n\n`
+                );
+              }
+            } catch (error) {
+              console.error(
+                "Failed to parse stream chunk:",
+                error
+              );
+            }
+          }
+        }
+      }
+    } finally {
+      reader.releaseLock();
+    }
+
+    if (!res.writableEnded) {
+      res.write("data: [DONE]\n\n");
+      res.end();
+    }
+
+    console.log("OpenRouter stream completed.");
+  } catch (error) {
+    if (error.name === "AbortError") {
+      console.log("OpenRouter request aborted.");
+
+      if (!res.writableEnded) {
+        res.end();
+      }
+
+      return;
+    }
+
+    console.error("Server error:", error);
+
+    if (!res.headersSent) {
+      return res.status(500).json({
+        error: "Failed to connect to OpenRouter.",
+      });
+    }
+
+    if (!res.writableEnded) {
+      res.write(
+        `data: ${JSON.stringify({
+          type: "error",
+          error: "Failed to connect to OpenRouter.",
+        })}\n\n`
+      );
+
+      res.end();
+    }
+  }
+});
+
+/* =========================================================
+START SERVER
+========================================================= */
+
+app.listen(PORT, () => {
+  console.log(`AI Chat server running on port ${PORT}`);
+});
